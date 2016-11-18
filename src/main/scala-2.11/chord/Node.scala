@@ -6,7 +6,8 @@ import akka.util.Timeout
 import chord.algorithms.{ClosestFingerPreceding, FindPredecessor, FindSuccessor}
 import chord.algorithms.ClosestFingerPreceding.Calculate
 
-import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
 
@@ -44,20 +45,36 @@ class Node(id: Long, keyspace: Long) extends Actor with ActorLogging {
 
   private def findSuccessor(id: Long)=
   {
+    val requester = sender
     val fsAlg = context.actorOf(FindSuccessor.props(keyspace.toInt))
-    fsAlg ! FindSuccessor.Calculate(id)
+    fsAlg ? FindSuccessor.Calculate(id) onSuccess {
+      case InvokeFindPredecessor(id) => self forward InvokeFindPredecessor(id)
+      case x: ActorRef => println(x)
+    }
   }
 
   private def findPredecessor(id: Long) =
   {
     val fpAlg = context.actorOf(FindPredecessor.props(keyspace.toInt))
-    fpAlg ! FindPredecessor.Calculate(id)
+    val requester = sender
+    println("FP requester: " + requester)
+    fpAlg ? FindPredecessor.Calculate(id) onSuccess {
+      case InvokeClosesFingerPreceding(id) => self forward closestFingerPreceding(id)
+      case GetIdentifier => self forward GetIdentifier
+      case GetSuccessor => self forward GetSuccessor
+      case GetFingerTable => self forward GetFingerTable
+      case x: ActorRef => requester ! x
+    }
   }
 
   private def closestFingerPreceding(id: Long) =
   {
+    val requester = sender
     val cfpAlg = context.actorOf(ClosestFingerPreceding.props(keyspace.toInt))
-    cfpAlg ! Calculate(id, fingerTable)
+    cfpAlg ? Calculate(id, fingerTable) onSuccess {
+      case GetIdentifier => self forward GetIdentifier
+      case x: ActorRef => requester ! x
+    }
   }
 
 
@@ -131,7 +148,9 @@ class Node(id: Long, keyspace: Long) extends Actor with ActorLogging {
 
     case TestFindSuccessor(id) => findSuccessor(id)
 
-
+    case InvokeClosesFingerPreceding(id) => closestFingerPreceding(id)
+    case InvokeFindPredecessor(id) => findPredecessor(id)
+    case InvokeFindSuccessor(id) => findSuccessor(id)
 
   }
 
@@ -157,6 +176,9 @@ object Node
   case object GetSuccessor extends Request
   case object GetIdentifier extends Request
   case object GetFingerTable extends Request
+  case class InvokeFindPredecessor(id: Long) extends Request
+  case class InvokeClosesFingerPreceding(id: Long) extends Request
+  case class InvokeFindSuccessor(id: Long) extends Request
   case class SetPredecessor(pred: ActorRef) extends Request
   case class TestFindSuccessor(id:Long) extends Request
 

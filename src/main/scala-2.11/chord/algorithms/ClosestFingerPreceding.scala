@@ -22,6 +22,7 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
   {
     case Calculate(id,fingerTable) =>
     {
+      println("-> CFP invoked")
       var identifierFut = sender  ? GetIdentifier
       Await.result(identifierFut,Duration.Inf)
       var identifier = identifierFut.value.get.get.asInstanceOf[Long]
@@ -36,12 +37,12 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
         {
           println("in IF  -> "  + fingerTable(i)._2)
           sender ! fingerTable(i)._2
-          context.stop(self)
+          //context.stop(self)
         }
       }
-      println("out of if -> " + senders )
+      println("out of if -> " + sender)
       sender ! sender
-      context.stop(self)
+      //context.stop(self)
     }
   }
 }

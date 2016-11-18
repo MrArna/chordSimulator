@@ -3,7 +3,7 @@ package chord.algorithms
 import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import chord.Node.{GetFingerTable, GetIdentifier, GetSuccessor}
+import chord.Node._
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -21,7 +21,7 @@ class FindPredecessor(keyspace: Int) extends Actor
   {
     case Calculate(id) =>
     {
-      println("FP initiated")
+      println("-> FP invoked")
 
       var nPrime = sender
       var nPrimeIdentifierFut = nPrime ? GetIdentifier
@@ -43,14 +43,13 @@ class FindPredecessor(keyspace: Int) extends Actor
         Await.result(fingerTableFut,Duration.Inf)
         var fingerTable = fingerTableFut.value.get.get.asInstanceOf[List[(Long,ActorRef)]]
 
-        var cfp = context.actorOf(ClosestFingerPreceding.props(keyspace))
-        var cfpFut = cfp ? ClosestFingerPreceding.Calculate(id,fingerTable)
+        var cfpFut = sender ? InvokeClosesFingerPreceding(id)
         Await.result(cfpFut, Duration.Inf)
         nPrime = cfpFut.value.get.get.asInstanceOf[ActorRef]
       }
 
       sender ! nPrime
-      context.stop(self)
+      //context.stop(self)
 
     }
   }
