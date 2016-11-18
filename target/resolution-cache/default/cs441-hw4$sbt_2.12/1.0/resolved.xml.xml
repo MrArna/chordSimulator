@@ -4,7 +4,7 @@
 		module="cs441-hw4$sbt_2.12"
 		revision="1.0"
 		status="integration"
-		publication="20161113154541"
+		publication="20161114135012"
 	/>
 	<configurations>
 		<conf name="default" visibility="public"/>
