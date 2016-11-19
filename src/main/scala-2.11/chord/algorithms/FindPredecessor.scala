@@ -17,6 +17,19 @@ class FindPredecessor(keyspace: Int) extends Actor
   import scala.concurrent.duration._
   implicit val timeout = Timeout(60 seconds)
 
+
+  private def inInterval(id: Long, lowerBound: Long, upperBound: Long): Boolean =
+  {
+    if (lowerBound < upperBound) {
+      if (id > lowerBound && id <= upperBound) { return true }
+      else return false
+    } else {
+      if (id > lowerBound || id <= upperBound) { return true }
+      else return false
+    }
+  }
+
+
   override def receive: Receive =
   {
     case Calculate(id,nodeRef) =>
@@ -36,7 +49,7 @@ class FindPredecessor(keyspace: Int) extends Actor
       Await.result(nPrimeSuccIdentifierFut,Duration.Inf)
       var nPrimeSuccIdentifier = nPrimeSuccIdentifierFut.value.get.get.asInstanceOf[Long]
 
-      while (id <= nPrimeIdentifier && id > nPrimeSuccIdentifier)
+      while (!inInterval(id,nPrimeIdentifier,nPrimeSuccIdentifier))
       {
 
         var fingerTableFut = nPrime ? GetFingerTable

@@ -18,6 +18,22 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
   import scala.concurrent.duration._
   implicit val timeout = Timeout(60 seconds)
 
+
+
+  private def inInterval(id: Long, lowerBound: Long, upperBound: Long): Boolean =
+  {
+    if (lowerBound < upperBound) {
+      if (id > lowerBound && id < upperBound) { return true }
+      else return false
+    } else {
+      if (id > lowerBound || id < upperBound) { return true }
+      else return false
+    }
+  }
+
+
+
+
   override def receive: Receive =
   {
     case Calculate(id,fingerTable,nodeRef) =>
@@ -33,7 +49,7 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
         Await.result(identifierFut,Duration.Inf)
         var node = identifierFut.value.get.get.asInstanceOf[Long]
 
-        if(node > identifier && node < id)
+        if(inInterval(node,identifier,id))
         {
           //println("in IF  -> "  + fingerTable(i)._2)
           sender ! fingerTable(i)._2
