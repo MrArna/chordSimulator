@@ -20,10 +20,12 @@ class FindSuccessor(keyspace: Int) extends Actor
 
   override def receive: Receive =
   {
-    case Calculate(id) =>
+    case Calculate(id,nodeRef) =>
       {
         println("-> FS invoked")
-        val fpAlgFut = sender ? InvokeFindPredecessor(id)
+
+        val fpAlg = context.actorOf(FindPredecessor.props(keyspace.toInt))
+        val fpAlgFut = fpAlg ? FindPredecessor.Calculate(id,nodeRef)
         Await.ready(fpAlgFut,Duration.Inf)
         val nPrime = fpAlgFut.value.get.get.asInstanceOf[ActorRef]
 

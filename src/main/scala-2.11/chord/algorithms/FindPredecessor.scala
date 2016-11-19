@@ -19,11 +19,11 @@ class FindPredecessor(keyspace: Int) extends Actor
 
   override def receive: Receive =
   {
-    case Calculate(id) =>
+    case Calculate(id,nodeRef) =>
     {
       println("-> FP invoked")
 
-      var nPrime = sender
+      var nPrime = nodeRef
       var nPrimeIdentifierFut = nPrime ? GetIdentifier
       Await.result(nPrimeIdentifierFut,Duration.Inf)
       var nPrimeIdentifier = nPrimeIdentifierFut.value.get.get.asInstanceOf[Long]
@@ -43,9 +43,23 @@ class FindPredecessor(keyspace: Int) extends Actor
         Await.result(fingerTableFut,Duration.Inf)
         var fingerTable = fingerTableFut.value.get.get.asInstanceOf[List[(Long,ActorRef)]]
 
-        var cfpFut = sender ? InvokeClosesFingerPreceding(id)
+        val cfpAlg = context.actorOf(ClosestFingerPreceding.props(keyspace.toInt))
+        var cfpFut = cfpAlg ? ClosestFingerPreceding.Calculate(id,fingerTable,nodeRef)
         Await.result(cfpFut, Duration.Inf)
         nPrime = cfpFut.value.get.get.asInstanceOf[ActorRef]
+
+        nPrimeIdentifierFut = nPrime ? GetIdentifier
+        Await.result(nPrimeIdentifierFut,Duration.Inf)
+        nPrimeIdentifier = nPrimeIdentifierFut.value.get.get.asInstanceOf[Long]
+
+        nPrimeSuccFut = nPrime ? GetSuccessor
+        Await.result(nPrimeSuccFut,Duration.Inf)
+        nPrimeSucc = nPrimeSuccFut.value.get.get.asInstanceOf[ActorRef]
+
+        nPrimeSuccIdentifierFut = nPrimeSucc ? GetIdentifier
+        Await.result(nPrimeSuccIdentifierFut,Duration.Inf)
+        nPrimeSuccIdentifier = nPrimeSuccIdentifierFut.value.get.get.asInstanceOf[Long]
+
       }
 
       sender ! nPrime
@@ -60,7 +74,7 @@ object FindPredecessor
 {
 
   trait Request
-  case class Calculate(id: Long) extends Request
+  case class Calculate(id: Long, nodeRef: ActorRef) extends Request
 
   def props(kespace: Int): Props = Props(new FindPredecessor(kespace))
 

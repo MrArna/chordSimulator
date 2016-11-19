@@ -20,10 +20,10 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
 
   override def receive: Receive =
   {
-    case Calculate(id,fingerTable) =>
+    case Calculate(id,fingerTable,nodeRef) =>
     {
       println("-> CFP invoked")
-      var identifierFut = sender  ? GetIdentifier
+      var identifierFut = nodeRef  ? GetIdentifier
       Await.result(identifierFut,Duration.Inf)
       var identifier = identifierFut.value.get.get.asInstanceOf[Long]
       for(i <- (keyspace-1) to 0 by -1)
@@ -35,13 +35,13 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
 
         if(node > identifier && node < id)
         {
-          println("in IF  -> "  + fingerTable(i)._2)
+          //println("in IF  -> "  + fingerTable(i)._2)
           sender ! fingerTable(i)._2
           //context.stop(self)
         }
       }
-      println("out of if -> " + sender)
-      sender ! sender
+      //println("out of if -> " + sender)
+      sender ! nodeRef
       //context.stop(self)
     }
   }
@@ -53,7 +53,7 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
 object  ClosestFingerPreceding
 {
   trait Reqest
-  case class Calculate(id: Long, fingerTable: List[(Long, ActorRef)]) extends Reqest
+  case class Calculate(id: Long, fingerTable: List[(Long, ActorRef)], nodeRef: ActorRef) extends Reqest
 
 
   def props(keyspace: Int):Props = Props(new ClosestFingerPreceding(keyspace))
