@@ -1,9 +1,13 @@
 package chord
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import java.util.concurrent.TimeUnit
+
+import akka.actor.{Actor, ActorLogging, ActorRef, Props,Cancellable}
 import akka.util.Timeout
 import chord.algorithms.ClosestFingerPreceding.Calculate
 import chord.algorithms._
+
+import scala.concurrent.duration.Duration
 
 
 /**
@@ -15,6 +19,26 @@ class Node(id: Long, keyspace: Long, clusterRef: ActorRef) extends Actor with Ac
 
   var pred = self
   var succ = self
+
+  val stabilize = context.actorOf(Stabilize.props())
+  val fixFinger = context.actorOf(FixFingers.props(keyspace.toInt))
+
+  context.system.scheduler.schedule(
+    Duration.create(1, TimeUnit.SECONDS),
+    Duration.create(500, TimeUnit.MILLISECONDS),
+    stabilize,
+    Stabilize.Calculate(self)
+  )
+
+  context.system.scheduler.schedule(
+    Duration.create(1, TimeUnit.SECONDS),
+    Duration.create(500, TimeUnit.MILLISECONDS),
+    fixFinger,
+    FixFingers.Calculate(self)
+  )
+
+
+
 
   var fingerTable: List[(Long, ActorRef)] = List.empty
 
@@ -42,7 +66,7 @@ class Node(id: Long, keyspace: Long, clusterRef: ActorRef) extends Actor with Ac
   private def closestFingerPreceding(id: Long) =
   {
     val cfpAlg = context.actorOf(ClosestFingerPreceding.props(keyspace.toInt))
-    cfpAlg ! Calculate(id, fingerTable,self)
+    cfpAlg ! Calculate(id,self)
   }
 
 
@@ -79,12 +103,22 @@ class Node(id: Long, keyspace: Long, clusterRef: ActorRef) extends Actor with Ac
     case DumpState => println(this.toString())
 
     case GetPredecessor => sender ! pred
-    case GetSuccessor => sender ! succ
+    case GetSuccessor => sender ! fingerTable(0)._2
     case GetIdentifier => sender ! identifier
     case GetFingerTable => sender ! fingerTable
-    case SetSuccessor(s) => succ = s
-    case SetFingertable(ft) => fingerTable = ft; succ = ft(0)._2
-    case SetPredecessor(p) => pred = p
+    case SetSuccessor(s) => {succ = s; fingerTable = fingerTable.updated(0,fingerTable(0).copy(_2 = s)) ; sender ! SuccessorSettled}
+    case SetFingertable(ft) => {fingerTable = ft; succ = ft(0)._2; sender ! FingerTableSettled}
+
+    case SetPredecessor(p) =>
+    {
+      pred = p
+      sender ! PredecessorSettled
+    }
+
+    case UpdateFingerTable(i,node) =>
+    {
+      fingerTable = fingerTable.updated(i,fingerTable(0).copy(_2 = node))
+    }
 
     case TestFindSuccessor(id) => findSuccessor(id)
 
@@ -122,11 +156,14 @@ object Node
   case class SetPredecessor(pred: ActorRef) extends Request
   case class TestFindSuccessor(id:Long) extends Request
   case class SetSuccessor(succ: ActorRef) extends Request
-  case class SetFingertable(fingerTable: List[(Long,ActorRef)])
+  case class SetFingertable(fingerTable: List[(Long,ActorRef)]) extends Request
+  case class UpdateFingerTable(i: Int,node: ActorRef) extends Request
 
   trait Response
   case class CmonJoin(existingNodeRef: ActorRef) extends Response
-
+  case object FingerTableSettled extends Response
+  case object SuccessorSettled extends Response
+  case object PredecessorSettled extends Response
 
   def props(nodeId: Long, keyspace: Long, clusterRef: ActorRef): Props = Props(new Node(nodeId,keyspace,clusterRef))
 }

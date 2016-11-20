@@ -3,7 +3,7 @@ package chord.algorithms
 import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import chord.Node.GetIdentifier
+import chord.Node.{GetFingerTable, GetIdentifier}
 import chord.algorithms.ClosestFingerPreceding.Calculate
 
 import scala.concurrent.Await
@@ -35,32 +35,40 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
 
   override def receive: Receive =
   {
-    case Calculate(id,fingerTable,nodeRef) =>
+    case Calculate(id,nodeRef) =>
     {
       println("-> CFP invoked")
 
+      //return node
       var result:ActorRef = nodeRef
 
+      // n
       var identifierFut = nodeRef  ? GetIdentifier
       Await.result(identifierFut,Duration.Inf)
       val identifier = identifierFut.value.get.get.asInstanceOf[Long]
+
+      //n.finger_table
+      val fingerTableFut = nodeRef ? GetFingerTable
+      Await.result(fingerTableFut,Duration.Inf)
+      val fingerTable = fingerTableFut.value.get.get.asInstanceOf[List[(Long,ActorRef)]]
+
+
+      // for i = m downto 1
       for(i <- (keyspace-1) to 0 by -1)
       {
-
+        //n.finger_table[i].node
         identifierFut = fingerTable(i)._2 ? GetIdentifier
         Await.result(identifierFut,Duration.Inf)
         var node = identifierFut.value.get.get.asInstanceOf[Long]
 
+        //if n.finger_table[i].node belongs to [n, id]
         if(inInterval(node,identifier,id))
         {
-          //println("in IF  -> "  + fingerTable(i)._2)
+          //return finger_Table[i].node
           result = fingerTable(i)._2
-          //context.stop(self)
         }
       }
-      //println("out of if -> " + sender)
       sender ! result
-      //context.stop(self)
     }
   }
 }
@@ -71,7 +79,7 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
 object  ClosestFingerPreceding
 {
   trait Reqest
-  case class Calculate(id: Long, fingerTable: List[(Long, ActorRef)], nodeRef: ActorRef) extends Reqest
+  case class Calculate(id: Long, nodeRef: ActorRef) extends Reqest
 
 
   def props(keyspace: Int):Props = Props(new ClosestFingerPreceding(keyspace))

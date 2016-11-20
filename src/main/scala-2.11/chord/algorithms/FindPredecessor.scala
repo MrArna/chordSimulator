@@ -36,11 +36,16 @@ class FindPredecessor(keyspace: Int) extends Actor
     {
       println("-> FP invoked")
 
+
+      val cfpAlg = context.actorOf(ClosestFingerPreceding.props(keyspace.toInt))
+
+      // n' = n
       var nPrime = nodeRef
       var nPrimeIdentifierFut = nPrime ? GetIdentifier
       Await.result(nPrimeIdentifierFut,Duration.Inf)
       var nPrimeIdentifier = nPrimeIdentifierFut.value.get.get.asInstanceOf[Long]
 
+      //n'.successor
       var nPrimeSuccFut = nPrime ? GetSuccessor
       Await.result(nPrimeSuccFut,Duration.Inf)
       var nPrimeSucc = nPrimeSuccFut.value.get.get.asInstanceOf[ActorRef]
@@ -49,22 +54,26 @@ class FindPredecessor(keyspace: Int) extends Actor
       Await.result(nPrimeSuccIdentifierFut,Duration.Inf)
       var nPrimeSuccIdentifier = nPrimeSuccIdentifierFut.value.get.get.asInstanceOf[Long]
 
+      //while id not belongs to (n',n'.successor]
       while (!inInterval(id,nPrimeIdentifier,nPrimeSuccIdentifier))
       {
 
+        //n'.finger_table
         var fingerTableFut = nPrime ? GetFingerTable
         Await.result(fingerTableFut,Duration.Inf)
         var fingerTable = fingerTableFut.value.get.get.asInstanceOf[List[(Long,ActorRef)]]
 
-        val cfpAlg = context.actorOf(ClosestFingerPreceding.props(keyspace.toInt))
-        var cfpFut = cfpAlg ? ClosestFingerPreceding.Calculate(id,fingerTable,nodeRef)
+
+        var cfpFut = cfpAlg ? ClosestFingerPreceding.Calculate(id,nPrime)
         Await.result(cfpFut, Duration.Inf)
         nPrime = cfpFut.value.get.get.asInstanceOf[ActorRef]
 
+        //n' = n'.closest_finger_predecessor
         nPrimeIdentifierFut = nPrime ? GetIdentifier
         Await.result(nPrimeIdentifierFut,Duration.Inf)
         nPrimeIdentifier = nPrimeIdentifierFut.value.get.get.asInstanceOf[Long]
 
+        //updtate interval for the while condition
         nPrimeSuccFut = nPrime ? GetSuccessor
         Await.result(nPrimeSuccFut,Duration.Inf)
         nPrimeSucc = nPrimeSuccFut.value.get.get.asInstanceOf[ActorRef]

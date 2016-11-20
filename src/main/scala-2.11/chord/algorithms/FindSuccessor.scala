@@ -24,6 +24,7 @@ class FindSuccessor(keyspace: Int) extends Actor
       {
         println("-> FS invoked")
 
+        // n' = find_predecessor(id)
         val fpAlg = context.actorOf(FindPredecessor.props(keyspace.toInt))
         val fpAlgFut = fpAlg ? FindPredecessor.Calculate(id,nodeRef)
         Await.ready(fpAlgFut,Duration.Inf)
