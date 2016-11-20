@@ -29,6 +29,7 @@ class ClusterManager(keyspace: Int) extends Actor with ActorLogging {
 
   private var joinRequestQueue: Map[Int,ActorRef] = Map.empty
 
+  private var nodeId = 7
 
   private var keys: Set[Int] = Set.empty
 
@@ -63,10 +64,9 @@ class ClusterManager(keyspace: Int) extends Actor with ActorLogging {
 
     case CreateNodeRequest =>
     {
-      val nodeId: Int = generateUniqueId(nodes.keySet | joinRequestQueue.keySet)
-      val nodeActor = context.actorOf(Node.props(nodeId,keyspace,self))
+      //val nodeId: Int = generateUniqueId(nodes.keySet | joinRequestQueue.keySet)
+      val nodeActor = context.actorOf(Node.props(nodeId,keyspace,self),name = "O" * nodeId)
       joinRequestQueue = joinRequestQueue + (nodeId -> nodeActor)
-
       if (joinRequestQueue.size == 1)
       {
         if (nodes.isEmpty)
@@ -83,6 +83,7 @@ class ClusterManager(keyspace: Int) extends Actor with ActorLogging {
           joinRequestQueue(existingNodeId) ! LetJoin(nodeActor)
         }
       }
+      nodeId -= 1
     }
 
 

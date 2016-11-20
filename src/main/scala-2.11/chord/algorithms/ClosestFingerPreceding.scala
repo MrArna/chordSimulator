@@ -7,7 +7,6 @@ import chord.Node.GetIdentifier
 import chord.algorithms.ClosestFingerPreceding.Calculate
 
 import scala.concurrent.Await
-import scala.concurrent.duration.Duration
 
 /**
   * Created by Marco on 17/11/16.
@@ -39,25 +38,28 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
     case Calculate(id,fingerTable,nodeRef) =>
     {
       println("-> CFP invoked")
+
+      var result:ActorRef = nodeRef
+
       var identifierFut = nodeRef  ? GetIdentifier
       Await.result(identifierFut,Duration.Inf)
-      var identifier = identifierFut.value.get.get.asInstanceOf[Long]
+      val identifier = identifierFut.value.get.get.asInstanceOf[Long]
       for(i <- (keyspace-1) to 0 by -1)
       {
 
-        var identifierFut = fingerTable(i)._2 ? GetIdentifier
+        identifierFut = fingerTable(i)._2 ? GetIdentifier
         Await.result(identifierFut,Duration.Inf)
         var node = identifierFut.value.get.get.asInstanceOf[Long]
 
         if(inInterval(node,identifier,id))
         {
           //println("in IF  -> "  + fingerTable(i)._2)
-          sender ! fingerTable(i)._2
+          result = fingerTable(i)._2
           //context.stop(self)
         }
       }
       //println("out of if -> " + sender)
-      sender ! nodeRef
+      sender ! result
       //context.stop(self)
     }
   }

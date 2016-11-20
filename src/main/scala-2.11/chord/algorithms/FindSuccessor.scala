@@ -31,7 +31,8 @@ class FindSuccessor(keyspace: Int) extends Actor
 
         val nPrimeSuccFut = nPrime ? GetSuccessor
         Await.result(nPrimeSuccFut,Duration.Inf)
-        sender ! nPrimeSuccFut.value.get.get.asInstanceOf[ActorRef]
+        val nPrimSucc =  nPrimeSuccFut.value.get.get.asInstanceOf[ActorRef]
+        sender ! nPrimSucc
         //context.stop(self)
       }
   }
