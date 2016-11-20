@@ -62,8 +62,8 @@ class Stabilize extends Actor
           Await.result(node ? SetSuccessor(succPred),Duration.Inf)
         }
 
-        val notifyAlg = context.actorOf()
-        Await.result(succ ? Noti)
+        val notifyAlg = context.actorOf(Notify.props())
+        Await.result(succ ? Notify.Calculate(succ,node),Duration.Inf)
       }
   }
 }

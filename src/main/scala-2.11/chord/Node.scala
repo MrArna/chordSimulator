@@ -2,11 +2,13 @@ package chord
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Actor, ActorLogging, ActorRef, Props,Cancellable}
+import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, Props}
 import akka.util.Timeout
 import chord.algorithms.ClosestFingerPreceding.Calculate
+import chord.algorithms.Join.JoinCompleted
 import chord.algorithms._
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.Duration
 
 
@@ -23,21 +25,8 @@ class Node(id: Long, keyspace: Long, clusterRef: ActorRef) extends Actor with Ac
   val stabilize = context.actorOf(Stabilize.props())
   val fixFinger = context.actorOf(FixFingers.props(keyspace.toInt))
 
-  context.system.scheduler.schedule(
-    Duration.create(1, TimeUnit.SECONDS),
-    Duration.create(500, TimeUnit.MILLISECONDS),
-    stabilize,
-    Stabilize.Calculate(self)
-  )
-
-  context.system.scheduler.schedule(
-    Duration.create(1, TimeUnit.SECONDS),
-    Duration.create(500, TimeUnit.MILLISECONDS),
-    fixFinger,
-    FixFingers.Calculate(self)
-  )
-
-
+  var scheduledStabilize: Cancellable = null
+  var schduledFixfinger: Cancellable = null
 
 
   var fingerTable: List[(Long, ActorRef)] = List.empty
@@ -121,6 +110,26 @@ class Node(id: Long, keyspace: Long, clusterRef: ActorRef) extends Actor with Ac
     }
 
     case TestFindSuccessor(id) => findSuccessor(id)
+
+    case JoinCompleted(id) =>
+    {
+      println(identifier)
+      scheduledStabilize = context.system.scheduler.schedule(
+        Duration.create(10, TimeUnit.MILLISECONDS),
+        Duration.create(50, TimeUnit.MILLISECONDS),
+        stabilize,
+        Stabilize.Calculate(self)
+      )
+
+      schduledFixfinger =context.system.scheduler.schedule(
+        Duration.create(10, TimeUnit.MILLISECONDS),
+        Duration.create(50, TimeUnit.MILLISECONDS),
+        fixFinger,
+        FixFingers.Calculate(self)
+      )
+    }
+
+
 
     case InvokeClosesFingerPreceding(id) => closestFingerPreceding(id)
     case InvokeFindPredecessor(id) => findPredecessor(id)
