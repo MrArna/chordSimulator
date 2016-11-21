@@ -37,7 +37,7 @@ class Notify extends Actor
   {
     case Calculate(nPrime,node) =>
     {
-
+      println("-> NOTIFY invoked")
       val nFut = node ? GetIdentifier
       Await.result(nFut,Duration.Inf)
       val n = nFut.value.get.get.asInstanceOf[Long]
@@ -67,6 +67,7 @@ class Notify extends Actor
           Await.result(node ? SetPredecessor(nPrime),Duration.Inf)
         }
       }
+      println("-> NOTI completed")
     }
   }
 }

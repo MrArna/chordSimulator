@@ -75,6 +75,10 @@ class Node(id: Long, keyspace: Long, clusterRef: ActorRef) extends Actor with Ac
 
     case LetJoin(newNode) =>
       {
+        if (schduledFixfinger != null) {
+          //scheduledStabilize.cancel()
+          schduledFixfinger.cancel()
+        }
         println("Node " + this + " is letting join")
         if(newNode == self)
         {
@@ -113,20 +117,19 @@ class Node(id: Long, keyspace: Long, clusterRef: ActorRef) extends Actor with Ac
 
     case JoinCompleted(id) =>
     {
-      println(identifier)
-      scheduledStabilize = context.system.scheduler.schedule(
+      /*scheduledStabilize = context.system.scheduler.schedule(
         Duration.create(10, TimeUnit.MILLISECONDS),
-        Duration.create(50, TimeUnit.MILLISECONDS),
+        Duration.create(1000, TimeUnit.MILLISECONDS),
         stabilize,
         Stabilize.Calculate(self)
       )
 
       schduledFixfinger =context.system.scheduler.schedule(
         Duration.create(10, TimeUnit.MILLISECONDS),
-        Duration.create(50, TimeUnit.MILLISECONDS),
+        Duration.create(1000, TimeUnit.MILLISECONDS),
         fixFinger,
         FixFingers.Calculate(self)
-      )
+      )*/
     }
 
 

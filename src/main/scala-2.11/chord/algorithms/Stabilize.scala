@@ -34,6 +34,8 @@ class Stabilize extends Actor
     case Calculate(node) =>
       {
 
+
+        println("-> STAB invoked")
         //n
         val nFut = node ? GetIdentifier
         Await.result(nFut,Duration.Inf)
@@ -64,6 +66,7 @@ class Stabilize extends Actor
 
         val notifyAlg = context.actorOf(Notify.props())
         Await.result(succ ? Notify.Calculate(succ,node),Duration.Inf)
+        println("-> STAB completed")
       }
   }
 }

@@ -2,10 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92ee15c4-15a1-4099-b05f-096d26a57fa6" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/JoinTest.scala" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/UpdateOthersTest.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/ChordTest.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/ChordTest.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/NodeMaster.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/NodeMaster.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FixFingers.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FixFingers.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Notify.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Notify.scala" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Stabilize.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Stabilize.scala" />
     </list>
     <ignored path="cs441-HW4.iws" />
@@ -79,23 +81,36 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Node.scala" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala">
+      <file leaf-file-name="UpdateOthers.scala" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthers.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="115" column="6" selection-start-line="115" selection-start-column="6" selection-end-line="115" selection-end-column="6" />
+            <state relative-caret-position="363">
+              <caret line="46" column="76" selection-start-line="46" selection-start-column="76" selection-end-line="46" selection-end-column="76" />
               <folding>
-                <element signature="e#15#51#0" expanded="true" />
+                <element signature="e#26#57#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Join.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Join.scala">
+      <file leaf-file-name="UpdateFingerTable.scala" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTable.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="456">
-              <caret line="55" column="44" selection-start-line="55" selection-start-column="44" selection-end-line="55" selection-end-column="44" />
+            <state relative-caret-position="288">
+              <caret line="26" column="14" selection-start-line="26" selection-start-column="14" selection-end-line="26" selection-end-column="14" />
+              <folding>
+                <element signature="e#26#68#0" expanded="true" />
+                <element signature="e#374#400#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="InitFingerTable.scala" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-41">
+              <caret line="75" column="68" selection-start-line="75" selection-start-column="68" selection-end-line="75" selection-end-column="68" />
               <folding>
                 <element signature="e#26#68#0" expanded="true" />
               </folding>
@@ -103,23 +118,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UpdateOthersTest.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/UpdateOthersTest.scala">
+      <file leaf-file-name="Node.scala" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="14" column="27" selection-start-line="14" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="JoinTest.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/JoinTest.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-140">
-              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+            <state relative-caret-position="278">
+              <caret line="131" column="9" selection-start-line="131" selection-start-column="9" selection-end-line="131" selection-end-column="9" />
               <folding>
-                <element signature="e#26#55#0" expanded="true" />
+                <element signature="e#15#51#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -161,7 +166,6 @@
         <option value="$PROJECT_DIR$/src/main/scala/chord/ClusterManager.scala" />
         <option value="$PROJECT_DIR$/src/main/scala/chord/Node.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingertable.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/ChordTest.scala" />
         <option value="$PROJECT_DIR$/src/test/scala-2.11/TestKitUsageSpec.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/ClosestFingerPreceding.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FindSuccessor.scala" />
@@ -169,18 +173,19 @@
         <option value="$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/ClosestFingerPrecedingTest.scala" />
         <option value="$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/FindSuccessorTest.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FindPredecessor.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Notify.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/NodeMaster.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FixFingers.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Stabilize.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthers.scala" />
         <option value="$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/InitFingerTableTest.scala" />
         <option value="$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/UpdateOthersTest.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTable.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Join.scala" />
         <option value="$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/JoinTest.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/ChordTest.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/NodeMaster.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Join.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Stabilize.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Notify.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FixFingers.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthers.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTable.scala" />
       </list>
     </option>
   </component>
@@ -356,6 +361,36 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="Node.scala" />
+              <option name="myItemType" value="org.jetbrains.plugins.scala.components.ScalaDefsProjectViewProvider$ScalaFileTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ChordSim" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cs441-HW4" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala-2.11" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="chord" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="algorithms" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -390,7 +425,41 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="FixFingers.scala" />
+              <option name="myItemId" value="UpdateFingerTable.scala" />
+              <option name="myItemType" value="org.jetbrains.plugins.scala.components.ScalaDefsProjectViewProvider$ScalaFileTreeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="ChordSim" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="cs441-HW4" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="main" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="scala-2.11" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="chord" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="algorithms" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="InitFingerTable.scala" />
               <option name="myItemType" value="org.jetbrains.plugins.scala.components.ScalaDefsProjectViewProvider$ScalaFileTreeNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -443,22 +512,7 @@
       <recent name="$PROJECT_DIR$/src/main/scala-2.11" />
     </key>
   </component>
-  <component name="RunManager" selected="ScalaTest.JoinTest">
-    <configuration default="false" name="FindPredecessorTest" type="ScalaTestRunConfiguration" factoryName="ScalaTest" temporary="true">
-      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
-      <module name="cs441-hw4" />
-      <setting name="path" value="chord.algorithms.FindPredecessorTest" />
-      <setting name="package" value="" />
-      <setting name="vmparams" value="" />
-      <setting name="params" value="" />
-      <setting name="workingDirectory" value="file://$PROJECT_DIR$" />
-      <setting name="searchForTest" value="Across module dependencies" />
-      <setting name="testName" value="" />
-      <setting name="testKind" value="Class" />
-      <setting name="showProgressMessages" value="true" />
-      <envs />
-      <method />
-    </configuration>
+  <component name="RunManager" selected="Application.Test">
     <configuration default="false" name="FindSuccessorTest" type="ScalaTestRunConfiguration" factoryName="ScalaTest" temporary="true">
       <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
       <module name="cs441-hw4" />
@@ -516,6 +570,26 @@
       <setting name="testName" value="" />
       <setting name="testKind" value="Class" />
       <setting name="showProgressMessages" value="true" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Test" type="Application" factoryName="Application" temporary="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="chord.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="chord.Test" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="ENABLE_SWING_INSPECTOR" value="false" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <module name="cs441-hw4" />
       <envs />
       <method />
     </configuration>
@@ -992,19 +1066,19 @@
       <method />
     </configuration>
     <list size="5">
-      <item index="0" class="java.lang.String" itemvalue="ScalaTest.FindPredecessorTest" />
-      <item index="1" class="java.lang.String" itemvalue="ScalaTest.FindSuccessorTest" />
-      <item index="2" class="java.lang.String" itemvalue="ScalaTest.InitFingerTableTest" />
-      <item index="3" class="java.lang.String" itemvalue="ScalaTest.UpdateOthersTest" />
-      <item index="4" class="java.lang.String" itemvalue="ScalaTest.JoinTest" />
+      <item index="0" class="java.lang.String" itemvalue="ScalaTest.FindSuccessorTest" />
+      <item index="1" class="java.lang.String" itemvalue="ScalaTest.InitFingerTableTest" />
+      <item index="2" class="java.lang.String" itemvalue="ScalaTest.UpdateOthersTest" />
+      <item index="3" class="java.lang.String" itemvalue="ScalaTest.JoinTest" />
+      <item index="4" class="java.lang.String" itemvalue="Application.Test" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="ScalaTest.JoinTest" />
-        <item index="1" class="java.lang.String" itemvalue="ScalaTest.UpdateOthersTest" />
-        <item index="2" class="java.lang.String" itemvalue="ScalaTest.InitFingerTableTest" />
-        <item index="3" class="java.lang.String" itemvalue="ScalaTest.FindSuccessorTest" />
-        <item index="4" class="java.lang.String" itemvalue="ScalaTest.FindPredecessorTest" />
+        <item index="0" class="java.lang.String" itemvalue="Application.Test" />
+        <item index="1" class="java.lang.String" itemvalue="ScalaTest.JoinTest" />
+        <item index="2" class="java.lang.String" itemvalue="ScalaTest.UpdateOthersTest" />
+        <item index="3" class="java.lang.String" itemvalue="ScalaTest.InitFingerTableTest" />
+        <item index="4" class="java.lang.String" itemvalue="ScalaTest.FindSuccessorTest" />
       </list>
     </recent_temporary>
   </component>
@@ -1055,7 +1129,7 @@
       <option name="presentableId" value="Default" />
       <updated>1479073520150</updated>
       <workItem from="1479073522182" duration="84651000" />
-      <workItem from="1479653140420" duration="16011000" />
+      <workItem from="1479653140420" duration="21033000" />
     </task>
     <servers />
   </component>
@@ -1092,11 +1166,11 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="100662000" />
+    <option name="totallyTimeSpent" value="105684000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1143,19 +1217,13 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="scala-line">
-          <url>file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthers.scala</url>
-          <line>27</line>
-          <properties />
-          <option name="timeStamp" value="48" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="scala-line">
           <url>file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTable.scala</url>
-          <line>38</line>
+          <line>42</line>
           <properties />
-          <option name="timeStamp" value="49" />
+          <option name="timeStamp" value="54" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="53" />
+      <option name="time" value="55" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -1330,45 +1398,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Notify.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="21" column="44" selection-start-line="21" selection-start-column="44" selection-end-line="21" selection-end-column="44" />
-          <folding>
-            <element signature="e#26#54#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.ivy2/cache/com.typesafe.akka/akka-actor_2.11/srcs/akka-actor_2.11-2.3.14-sources.jar!/akka/actor/Scheduler.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="181">
           <caret line="52" column="12" selection-start-line="52" selection-start-column="12" selection-end-line="52" selection-end-column="12" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/NodeMaster.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="114" column="7" selection-start-line="114" selection-start-column="7" selection-end-line="114" selection-end-column="7" />
-          <folding>
-            <element signature="e#15#42#0" expanded="true" />
-            <element signature="e#328#351#0" expanded="true" />
-            <element signature="e#708#1348#0" expanded="false" />
-            <element signature="e#1353#2016#0" expanded="false" />
-            <element signature="e#2021#3573#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="705">
-          <caret line="75" column="68" selection-start-line="75" selection-start-column="68" selection-end-line="75" selection-end-column="68" />
-          <folding>
-            <element signature="e#26#68#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1379,14 +1413,6 @@
           <folding>
             <element signature="e#26#55#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/ChordTest.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="9" column="33" selection-start-line="9" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1421,69 +1447,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthers.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="78">
-          <caret line="27" column="12" selection-start-line="27" selection-start-column="12" selection-end-line="27" selection-end-column="12" />
-          <folding>
-            <element signature="e#26#57#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTable.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63">
-          <caret line="22" column="0" selection-start-line="22" selection-start-column="0" selection-end-line="22" selection-end-column="0" />
-          <folding>
-            <element signature="e#26#68#0" expanded="true" />
-            <element signature="e#374#400#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Stabilize.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="753">
-          <caret line="65" column="8" selection-start-line="65" selection-start-column="8" selection-end-line="65" selection-end-column="8" />
-          <folding>
-            <element signature="e#26#68#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/.ivy2/cache/com.typesafe.akka/akka-actor_2.11/srcs/akka-actor_2.11-2.3.14-sources.jar!/akka/actor/ActorCell.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="198">
           <caret line="489" column="10" selection-start-line="489" selection-start-column="10" selection-end-line="489" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FixFingers.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="33" column="8" selection-start-line="33" selection-start-column="8" selection-end-line="33" selection-end-column="8" />
-          <folding>
-            <element signature="e#26#68#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Join.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="456">
-          <caret line="55" column="44" selection-start-line="55" selection-start-column="44" selection-end-line="55" selection-end-column="44" />
-          <folding>
-            <element signature="e#26#68#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/UpdateOthersTest.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="14" column="27" selection-start-line="14" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1498,12 +1465,114 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/UpdateOthersTest.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="27" selection-start-line="14" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Stabilize.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="274">
+          <caret line="68" column="34" selection-start-line="68" selection-start-column="34" selection-end-line="68" selection-end-column="34" />
+          <folding>
+            <element signature="e#26#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Notify.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="475">
+          <caret line="69" column="22" selection-start-line="69" selection-start-column="22" selection-end-line="69" selection-end-column="22" />
+          <folding>
+            <element signature="e#26#54#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FixFingers.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="456">
+          <caret line="37" column="33" selection-start-line="37" selection-start-column="33" selection-end-line="37" selection-end-column="33" />
+          <folding>
+            <element signature="e#26#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/ChordTest.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="295">
+          <caret line="20" column="25" selection-start-line="20" selection-start-column="25" selection-end-line="20" selection-end-column="25" />
+          <folding>
+            <element signature="e#15#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/NodeMaster.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="65" column="85" selection-start-line="65" selection-start-column="85" selection-end-line="65" selection-end-column="85" />
+          <folding>
+            <element signature="e#15#42#0" expanded="true" />
+            <element signature="e#328#351#0" expanded="true" />
+            <element signature="e#708#1348#0" expanded="false" />
+            <element signature="e#1353#2016#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/Join.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="411">
+          <caret line="54" column="41" selection-start-line="54" selection-start-column="41" selection-end-line="54" selection-end-column="41" />
+          <folding>
+            <element signature="e#26#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="115" column="6" selection-start-line="115" selection-start-column="6" selection-end-line="115" selection-end-column="6" />
+        <state relative-caret-position="278">
+          <caret line="131" column="9" selection-start-line="131" selection-start-column="9" selection-end-line="131" selection-end-column="9" />
           <folding>
             <element signature="e#15#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-41">
+          <caret line="75" column="68" selection-start-line="75" selection-start-column="68" selection-end-line="75" selection-end-column="68" />
+          <folding>
+            <element signature="e#26#68#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthers.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="363">
+          <caret line="46" column="76" selection-start-line="46" selection-start-column="76" selection-end-line="46" selection-end-column="76" />
+          <folding>
+            <element signature="e#26#57#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTable.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="26" column="14" selection-start-line="26" selection-start-column="14" selection-end-line="26" selection-end-column="14" />
+          <folding>
+            <element signature="e#26#68#0" expanded="true" />
+            <element signature="e#374#400#0" expanded="true" />
           </folding>
         </state>
       </provider>

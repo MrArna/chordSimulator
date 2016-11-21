@@ -63,7 +63,7 @@ class ClusterManager(keyspace: Int) extends Actor with ActorLogging {
     case CreateNodeRequest =>
     {
       val nodeId: Int = generateUniqueId(nodes.keySet | joinRequestQueue.keySet)
-      val nodeActor = context.actorOf(Node.props(nodeId,keyspace,self),name = "O" * nodeId)
+      val nodeActor = context.actorOf(Node.props(nodeId,keyspace,self),name =  "n" + ("O" * nodeId))
       joinRequestQueue = joinRequestQueue + (nodeId -> nodeActor)
       if (joinRequestQueue.size == 1)
       {

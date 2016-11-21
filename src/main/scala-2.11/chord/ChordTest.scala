@@ -18,7 +18,7 @@ object Test extends App
   val cluster = system.actorOf(Props(new ClusterManager(3)))
 
   println("Init completed\n")
-  cluster ! InitCluster(2)
+  cluster ! InitCluster(3)
 
   while (true)
     {

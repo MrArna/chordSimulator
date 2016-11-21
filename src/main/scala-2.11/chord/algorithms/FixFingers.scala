@@ -21,7 +21,7 @@ class FixFingers(keyspace: Int) extends Actor
   {
     case Calculate(node) =>
       {
-
+        println("-> FIX invoked")
         val fingerTableFut = node ? GetFingerTable
         Await.result(fingerTableFut,Duration.Inf)
         val fingerTable = fingerTableFut.value.get.get.asInstanceOf[List[(Long,ActorRef)]]
@@ -35,7 +35,7 @@ class FixFingers(keyspace: Int) extends Actor
         val result = resultFut.value.get.get.asInstanceOf[ActorRef]
 
         Await.result(node ? Node.UpdateFingerTable(index,result),Duration.Inf)
-
+        println("-> FIX completed")
       }
   }
 }
