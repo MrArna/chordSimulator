@@ -3,149 +3,275 @@ package chord
 import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, Props}
-import akka.util.Timeout
-import chord.algorithms.ClosestFingerPreceding.Calculate
-import chord.algorithms.Join.JoinCompleted
+import chord.JumpCalculator.{Calculate, JoinObserver}
+import chord.Node._
 import chord.algorithms._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.Duration
+import scala.concurrent.duration.FiniteDuration
 
 
 /**
   * Created by Marco on 16/11/16.
   */
-class Node(id: Long, keyspace: Long, clusterRef: ActorRef) extends Actor with ActorLogging {
+class Node(keySpace: Int) extends Actor with ActorLogging {
 
-  var identifier = id
+  var identifier: Int = 0
+  var succ: Int = 0
+  var pred: Int = 0
+  var fingerTable = Array.ofDim[String](keySpace)
+  var keyspace: Int = keySpace
+  var key: Int = 0
+  var allKeys: List[Int] = List()
+  var requestFrom: Int = 0
+  var jumpCount: Int = 0
+  var requestTicker: Cancellable = null
+  var numRequests: Int = 0
+  var requestCount: Int = 0
+  var requestCompleteCount: Int = 0
+  var fingerTableStart = Array.ofDim[Int](keySpace)
+  var fingerTableNode = Array.ofDim[Int](keySpace)
+  var nodes: Array[ActorRef] = null
+  var jumpCalculator: ActorRef = null
+  var knownNode: ActorRef = null
+  var nodeSpace: Int = math.pow(2, keySpace).toInt
+  var knownNodeObj: Node = null
+  var nodesObj: Array[Node] = Array.ofDim[Node](nodeSpace)
 
-  var pred = self
-  var succ = self
+  def receive = {
 
-  val stabilize = context.actorOf(Stabilize.props())
-  val fixFinger = context.actorOf(FixFingers.props(keyspace.toInt))
+    case Initialize(nid: Int, succ: Int, pred: Int, lookup: Array[String], requestNumber: Int, totalKeys: List[Int], hActor: ActorRef) => {
+      identifier = nid
+      this.succ = succ
+      this.pred = pred
+      fingerTable = lookup
+      numRequests = requestNumber
+      allKeys = totalKeys
+      jumpCalculator = hActor
+      for (i <- 0 to keySpace - 1) {
+        fingerTableStart(i) = fingerTable(i).split(",")(0).toInt
+        fingerTableNode(i) = fingerTable(i).split(",")(1).toInt
+      }
+    }
 
-  var scheduledStabilize: Cancellable = null
-  var schduledFixfinger: Cancellable = null
-
-
-  var fingerTable: List[(Long, ActorRef)] = List.empty
-
-  import Node._
-
-  private val idModulus = Math.pow(2.toDouble,keyspace)
-
-
-  import scala.concurrent.duration._
-  implicit val timeout = Timeout(60 seconds)
-
-
-  private def findSuccessor(id: Long)=
-  {
-    val fsAlg = context.actorOf(FindSuccessor.props(keyspace.toInt))
-    fsAlg ! FindSuccessor.Calculate(id,self)
-  }
-
-  private def findPredecessor(id: Long) =
-  {
-    val fpAlg = context.actorOf(FindPredecessor.props(keyspace.toInt))
-    fpAlg ! FindPredecessor.Calculate(id,self)
-  }
-
-  private def closestFingerPreceding(id: Long) =
-  {
-    val cfpAlg = context.actorOf(ClosestFingerPreceding.props(keyspace.toInt))
-    cfpAlg ! Calculate(id,self)
-  }
-
-
-  private def join(nPrime: ActorRef) =
-  {
-    val jAlg = context.actorOf(Join.props(keyspace.toInt,clusterRef))
-    jAlg ! Join.Calculate(nPrime,self)
-  }
-
-
-
-
-  override def receive: Receive =
-  {
-    case AssignKey(key) =>
-
-
-    case LetJoin(newNode) =>
-      {
-        if (schduledFixfinger != null) {
-          //scheduledStabilize.cancel()
-          schduledFixfinger.cancel()
-        }
-        println("Node " + this + " is letting join")
-        if(newNode == self)
-        {
-          newNode ! CmonJoin(null)
-        }
-        else
-        {
-          newNode ! CmonJoin(self)
-        }
+    case UpdateNetwork(allNodes: Array[ActorRef]) => {
+      nodes = allNodes
+      var x = 0
+      if (nodes.length > 1000) {
+        x = 1000
       }
 
-
-    case CmonJoin(existingNodeRef) => println("Node " + this + " is joining") ; join(existingNodeRef)
-
-    case DumpState => println(this.toString())
-
-    case GetPredecessor => sender ! pred
-    case GetSuccessor => sender ! fingerTable(0)._2
-    case GetIdentifier => sender ! identifier
-    case GetFingerTable => sender ! fingerTable
-    case SetSuccessor(s) => {succ = s; fingerTable = fingerTable.updated(0,fingerTable(0).copy(_2 = s)) ; sender ! SuccessorSettled}
-    case SetFingertable(ft) => {fingerTable = ft; succ = ft(0)._2; sender ! FingerTableSettled}
-
-    case SetPredecessor(p) =>
-    {
-      pred = p
-      sender ! PredecessorSettled
     }
 
-    case UpdateFingerTable(i,node) =>
-    {
-      fingerTable = fingerTable.updated(i,fingerTable(0).copy(_2 = node))
+    case Join(joiningId: Int, kNode: ActorRef, allNodes: Array[ActorRef], requestNumber: Int, hActor: ActorRef) => {
+      identifier = joiningId
+      knownNode = kNode
+      nodes = allNodes
+      numRequests = requestNumber
+      jumpCalculator = hActor
+      knownNode ! GetKnownInstance
+      for (i <- 0 to keySpace - 1) {
+        var start = (identifier + math.pow(2, i).toInt) % math.pow(2, keySpace).toInt
+        fingerTable(i) = (start + ",X")
+      }
+
+      for (i <- 0 to nodes.length - 1) {
+        if (nodes(i) != null) {
+          nodes(i) ! GetInstance
+        }
+
+      }
+      context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, InitJoin)
+
     }
 
-    case TestFindSuccessor(id) => findSuccessor(id)
+    case InitJoin => {
+      initFingerTable(knownNodeObj)
+      updateOthersFingerTable()
 
-    case JoinCompleted(id) =>
-    {
-      /*scheduledStabilize = context.system.scheduler.schedule(
-        Duration.create(10, TimeUnit.MILLISECONDS),
-        Duration.create(1000, TimeUnit.MILLISECONDS),
-        stabilize,
-        Stabilize.Calculate(self)
-      )
+      context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, UpdateKeys)
 
-      schduledFixfinger =context.system.scheduler.schedule(
-        Duration.create(10, TimeUnit.MILLISECONDS),
-        Duration.create(1000, TimeUnit.MILLISECONDS),
-        fixFinger,
-        FixFingers.Calculate(self)
-      )*/
+    }
+    case UpdateKeys => {
+
+      var presentNodes: List[Int] = List()
+      for (i <- 0 to nodes.length - 1) {
+        if (nodes(i) != null) {
+          presentNodes ::= nodesObj(i).identifier
+        }
+
+      }
+      presentNodes = presentNodes.sorted
+      var newKeys: List[Int] = List()
+      for (index <- 0 to presentNodes.length - 1) {
+        if (index == 0) {
+          var x = presentNodes(presentNodes.length - 1) + 1
+          newKeys = List()
+          for (i <- x to math.pow(2, keySpace).toInt - 1) {
+            newKeys ::= i
+          }
+          for (i <- 0 to presentNodes(index)) {
+            newKeys ::= i
+          }
+        } else if (index != 0 && index <= presentNodes.length - 1) {
+          newKeys = List()
+          for (i <- presentNodes(index - 1) + 1 to presentNodes(index)) {
+            newKeys ::= i
+          }
+        }
+        //println(newKeys.toList)
+        nodes(presentNodes(index)) ! SetKeys(newKeys)
+      }
+      println("Node "+identifier+" Joined..")
+
+
+      jumpCalculator ! JoinObserver(presentNodes, 1)
+
+
     }
 
+    case JoinCompleted(currentNodes: List[Int]) =>
+    {
+      println()
+      println("Request Processing Started...")
+      for (i <- 0 to currentNodes.length - 1) {
+        nodes(currentNodes(i)) ! StartQuerying
+      }
 
+    }
 
-    case InvokeClosesFingerPreceding(id) => closestFingerPreceding(id)
-    case InvokeFindPredecessor(id) => findPredecessor(id)
-    case InvokeFindSuccessor(id) => findSuccessor(id)
+    case StartQuerying => {
+      requestTicker = context.system.scheduler.schedule(FiniteDuration(5000, TimeUnit.MILLISECONDS), FiniteDuration(100, TimeUnit.MILLISECONDS), self, Start)
+
+    }
+
+    case GetInstance => {
+      sender ! SetInstance(this, identifier)
+
+    }
+    case SetInstance(rObj: Node, id: Int) => {
+      nodesObj(id) = rObj
+    }
+    case GetKnownInstance => {
+      sender ! SetKnownInstance(this)
+
+    }
+    case SetKnownInstance(rObj: Node) => {
+      knownNodeObj = rObj
+    }
+
+    case SetKeys(nKeys: List[Int]) => {
+      allKeys = nKeys
+    }
+
+    case UpdateFingerTable(aNodes: List[Int], newValue: Int) => {
+      UpdateFingerTableAlg.run(aNodes,newValue,this)
+
+    }
+
+    case LookupFingerTable(keyValue: Int, orgNode: Int, hop: Int) => {
+      var key = keyValue
+      requestFrom = orgNode
+      jumpCount = hop + 1
+
+      if (allKeys.contains(key)) {
+        //println("I am"+nodeId+"found"+key+"requestFrom" + requestFrom)
+        nodes(orgNode) ! Completed(jumpCount)
+      } else if (fingerTableStart.contains(key)) {
+        //println("I am" + nodeId + "requestFrom" + requestFrom + "key" + key + "forwarding to" + fingerTableNode(fingerTableStart.indexOf(key)))
+        nodes(fingerTableNode(fingerTableStart.indexOf(key))) ! LookupFingerTable(key, requestFrom, jumpCount)
+      } else {
+        if (inIntervalExEx(key, fingerTableStart(keySpace - 1), fingerTableStart(0))) {
+          //println("I am" + nodeId + "requestFrom" + requestFrom + "key" + key + "forwarding to" + fingerTableNode(m - 1))
+          nodes(fingerTableNode(keySpace - 1)) ! LookupFingerTable(key, requestFrom, jumpCount)
+        } else {
+          for (i <- 0 to keySpace - 2) {
+            if (inIntervalExEx(key, fingerTableStart(i), fingerTableStart(i + 1))) {
+              //println("III am" + nodeId + "requestFrom" + requestFrom + "key" + key + "forwarding to" + fingerTableNode(i))
+              nodes(fingerTableNode(i)) ! LookupFingerTable(key, requestFrom, jumpCount)
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+    case Start => {
+      val newKey = scala.util.Random.nextInt(math.pow(2, keyspace).toInt)
+      requestCount += 1
+      if (requestCount <= numRequests) {
+        self ! LookupFingerTable(newKey, identifier, -1)
+      } else {
+        requestTicker.cancel()
+      }
+
+    }
+
+    case Completed(hopCount: Int) => {
+      requestCompleteCount += 1
+      jumpCalculator ! Calculate(hopCount)
+      if (requestCompleteCount <= numRequests) {
+      }
+
+    }
+
+    case DumpState =>
+    {
+
+      var ftStr = ""
+      for(i <- 0 until fingerTable.length-1)
+      {
+        ftStr = ftStr +  "(" + fingerTable(i) + ") "
+      }
+      ftStr = ftStr +  "(" +fingerTable(fingerTable.length-1) + ")"
+
+      println(
+        "{\"node\":\"" + identifier + "\",\n" +
+        " \"fingerTable\": [" + ftStr + "],\n " +
+          "\"keys\": \"" + allKeys + "\"}")
+    }
+
+  }
+  def inIntervalExEx(Id: Int, first: Int, second: Int): Boolean = {
+    if (first < second) {
+      if (Id > first && Id < second) { return true }
+      else return false
+    } else {
+      if (Id > first || Id < second) { return true }
+      else return false
+    }
+  }
+
+  def initFingerTable(kNodeObj: Node) = {
+
+    InitFingerTable.run(kNodeObj,this)
 
   }
 
-
-  override def toString():String =
-  {
-    "[id: " + identifier + ", ref: " + self + ", fingerTable: " + fingerTable + "]"
+  def updateOthersFingerTable() = {
+    UpdateOthersFingerTable.run(this)
   }
 
+  def findSuccessor(kNodeId: Int, newNodeId: Int): Int = {
+
+
+    return FindSuccessor.run(kNodeId,newNodeId,nodesObj)
+  }
+
+  def findPredecessor(kNodeId: Int, newNodeId: Int): Int = {
+
+
+    return FindPredecessor.run(kNodeId,newNodeId,nodesObj)
+  }
+
+  def closestPrecedingFinger(kNodeId: Int, newNodeId: Int): Int = {
+
+    return ClosestPrecedingFinger.run(kNodeId,newNodeId,nodesObj)
+
+  }
 
 }
 
@@ -155,27 +281,26 @@ object Node
 
 
   trait Request
-  case class AssignKey(key: Int) extends Request
-  case class LetJoin(newNodeRef: ActorRef) extends Request
+  case class Initialize(nodeID: Int, successor: Int, predecssor: Int, fingerTable: Array[String], numRequests: Int, allKeys: List[Int], hopActor: ActorRef) extends Request
+  case class LookupFingerTable(key: Int, requestFrom: Int, hopCount: Int) extends Request
+  case object Start extends Request
+  case class UpdateNetwork(networkNodes: Array[ActorRef]) extends Request
+  case object InitJoin extends Request
+  case class Join(joiningNodeId: Int, knownNode: ActorRef, networkNodes: Array[ActorRef], numRequests: Int, hopActor: ActorRef) extends Request
+  case object GetInstance extends Request
+  case class SetInstance(receivedObj: Node, nodeId: Int) extends Request
+  case object GetKnownInstance extends Request
+  case class SetKnownInstance(receivedObj: Node) extends Request
+  case class UpdateFingerTable(affectedNodes: List[Int], updatedValue: Int) extends Request
+  case object StartQuerying extends Request
+  case object UpdateKeys extends Request
+  case class SetKeys(newKeys: List[Int]) extends Request
   case object DumpState extends Request
-  case object GetPredecessor extends Request
-  case object GetSuccessor extends Request
-  case object GetIdentifier extends Request
-  case object GetFingerTable extends Request
-  case class InvokeFindPredecessor(id: Long) extends Request
-  case class InvokeClosesFingerPreceding(id: Long) extends Request
-  case class InvokeFindSuccessor(id: Long) extends Request
-  case class SetPredecessor(pred: ActorRef) extends Request
-  case class TestFindSuccessor(id:Long) extends Request
-  case class SetSuccessor(succ: ActorRef) extends Request
-  case class SetFingertable(fingerTable: List[(Long,ActorRef)]) extends Request
-  case class UpdateFingerTable(i: Int,node: ActorRef) extends Request
 
   trait Response
-  case class CmonJoin(existingNodeRef: ActorRef) extends Response
-  case object FingerTableSettled extends Response
-  case object SuccessorSettled extends Response
-  case object PredecessorSettled extends Response
+  case class Completed(totalHops: Int) extends Response
+  case class JoinCompleted(currentNodes:List[Int]) extends Response
 
-  def props(nodeId: Long, keyspace: Long, clusterRef: ActorRef): Props = Props(new Node(nodeId,keyspace,clusterRef))
+
+  def props(keyspace: Int): Props = Props(new Node(keyspace))
 }
