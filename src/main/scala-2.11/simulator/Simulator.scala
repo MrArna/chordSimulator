@@ -14,7 +14,6 @@ object Simulator extends App {
               -jn <joining-nodes>
               -d <duration-in-seconds>
               -ts <time-stamp-in-seconds>
-              -qa <nr-of-quering-actors>
               -qn <nr-of-queries-per-actor>
               """
 
@@ -30,14 +29,13 @@ object Simulator extends App {
       case "-jn" :: value :: tail => nextOption(map ++ Map('joinNodes -> value.toInt), tail)
       case "-d" :: value :: tail => nextOption(map ++ Map('duration -> value.toInt), tail)
       case "-ts" :: value :: tail => nextOption(map ++ Map('timeStamp -> value.toInt), tail)
-      case "-qa" :: value :: tail => nextOption(map ++ Map('queringActor -> value.toInt), tail)
       case "-qn" :: value :: tail => nextOption(map ++ Map('queriesNumber -> value.toInt), tail)
       case string :: opt2 :: tail if isSwitch(opt2) => nextOption(map ++ Map('infile -> string), list.tail)
       case string :: Nil =>  nextOption(map ++ Map('infile -> string), list.tail)
     }
   }
 
-  if (args.length == 0 || args.length != 6*2) {
+  if (args.length == 0 || args.length != 5*2) {
     println(usage)
     System.exit(0)
   }

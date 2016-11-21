@@ -1,12 +1,16 @@
 package simulator
 
-import java.math.BigInteger
 
 import akka.actor.{Actor, ActorRef, Props}
-import chord.JumpCalculator.InitObserver
+import akka.pattern.ask
+import akka.util.Timeout
+import chord.JumpCalculator.{Calculate, InitObserver}
 import chord.Node.{DumpState, Join}
 import chord.{JumpCalculator, Node}
 import simulator.ClusterManager.{DumpSystem, InitMaster, NextNode}
+import scala.concurrent.duration._
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 /**
   * Created by Marco on 21/11/16.
@@ -16,11 +20,10 @@ class ClusterManager(keySpace:Int) extends Actor
   var nodeIDList: List[Int] = null
   var keyspace: Int = keySpace
   var numRequests: Int = 0
-  var key: Int = 0
   var joiningNode: List[Int] = List()
   var knownNode: ActorRef = null
   var peerNodes = Array.ofDim[ActorRef](math.pow(2, keySpace).toInt)
-  var hopActor:ActorRef = null
+  var jumpCalculator:ActorRef = null
 
   def receive =
   {
@@ -31,8 +34,8 @@ class ClusterManager(keySpace:Int) extends Actor
       joiningNode = nextNode
       var predecessor: Int = 0
       var successor: Int = 0
-      hopActor = context.system.actorOf(JumpCalculator.props((nodeIDList.length + joiningNode.length), numRequests))
-      hopActor ! InitObserver(self, joiningNode.length)
+      jumpCalculator = context.system.actorOf(JumpCalculator.props((nodeIDList.length + joiningNode.length), numRequests))
+      jumpCalculator ! InitObserver(self, joiningNode.length)
       for (index <- 0 to nodeIDList.length - 1) {
         var fingerTable = Array.ofDim[String](keySpace)
         var keys: List[Int] = List()
@@ -91,7 +94,7 @@ class ClusterManager(keySpace:Int) extends Actor
           }
         }
         //println(index)
-        peerNodes(nodeIDList(index)) ! Node.Initialize(nodeIDList(index), successor, predecessor, fingerTable, numRequests, keys, hopActor)
+        peerNodes(nodeIDList(index)) ! Node.Initialize(nodeIDList(index), successor, predecessor, fingerTable, numRequests, keys, jumpCalculator)
       }
       for (i <- 0 to nodeIDList.length - 1) {
         peerNodes(nodeIDList(i)) ! Node.UpdateNetwork(peerNodes)
@@ -105,11 +108,16 @@ class ClusterManager(keySpace:Int) extends Actor
 
     case NextNode(nIndex:Int) =>{
       peerNodes(joiningNode(nIndex)) = context.system.actorOf(Node.props(keyspace))
-      peerNodes(joiningNode(nIndex)) ! Join(joiningNode(nIndex), peerNodes(nodeIDList(0)), peerNodes, numRequests, hopActor)
+      peerNodes(joiningNode(nIndex)) ! Join(joiningNode(nIndex), peerNodes(nodeIDList(0)), peerNodes, numRequests, jumpCalculator)
 
     }
 
     case DumpSystem => {
+
+
+      implicit val timeout = Timeout(5 seconds)
+
+      Await.result(jumpCalculator ? Calculate,Duration.Inf)
       for (i <- 0 until peerNodes.length) {
         if (peerNodes(i) != null) {
           peerNodes(i) ! DumpState
@@ -118,19 +126,6 @@ class ClusterManager(keySpace:Int) extends Actor
     }
 
   }
-
-  def getKey(): Int = {
-    val keyString = "Marco" + "Arnaboldi" + scala.util.Random.nextInt(256) + "." + scala.util.Random.nextInt(256) + "." + scala.util.Random.nextInt(256) + "." + scala.util.Random.nextInt(256)
-    val md = java.security.MessageDigest.getInstance("SHA-1")
-    var encodedString = md.digest(keyString.getBytes("UTF-8")).map("%02x".format(_)).mkString
-    encodedString = new BigInteger(encodedString, 16).toString(2)
-    var keyHash = Integer.parseInt(encodedString.substring(encodedString.length() - keySpace), 2)
-    if (nodeIDList.contains(keyHash)) {
-      keyHash = getKey()
-    }
-    return keyHash
-  }
-
 }
 
 

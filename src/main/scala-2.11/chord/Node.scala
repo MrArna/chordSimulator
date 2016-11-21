@@ -3,7 +3,7 @@ package chord
 import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, Props}
-import chord.JumpCalculator.{Calculate, JoinObserver}
+import chord.JumpCalculator.{Calculate, JoinObserver, JumpDone, RequestCompleted}
 import chord.Node._
 import chord.algorithms._
 
@@ -21,13 +21,11 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
   var pred: Int = 0
   var fingerTable = Array.ofDim[String](keySpace)
   var keyspace: Int = keySpace
-  var key: Int = 0
   var allKeys: List[Int] = List()
   var requestFrom: Int = 0
   var jumpCount: Int = 0
-  var requestTicker: Cancellable = null
+  var requestRepetition: Cancellable = null
   var numRequests: Int = 0
-  var requestCount: Int = 0
   var requestCompleteCount: Int = 0
   var fingerTableStart = Array.ofDim[Int](keySpace)
   var fingerTableNode = Array.ofDim[Int](keySpace)
@@ -40,15 +38,15 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
 
   def receive = {
 
-    case Initialize(nid: Int, succ: Int, pred: Int, lookup: Array[String], requestNumber: Int, totalKeys: List[Int], hActor: ActorRef) => {
+    case Initialize(nid: Int, succ: Int, pred: Int, lookup: Array[String], requestNumber: Int, totalKeys: List[Int], jActor: ActorRef) => {
       identifier = nid
       this.succ = succ
       this.pred = pred
       fingerTable = lookup
       numRequests = requestNumber
       allKeys = totalKeys
-      jumpCalculator = hActor
-      for (i <- 0 to keySpace - 1) {
+      jumpCalculator = jActor
+      for (i <- 0 to keyspace - 1) {
         fingerTableStart(i) = fingerTable(i).split(",")(0).toInt
         fingerTableNode(i) = fingerTable(i).split(",")(1).toInt
       }
@@ -56,19 +54,14 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
 
     case UpdateNetwork(allNodes: Array[ActorRef]) => {
       nodes = allNodes
-      var x = 0
-      if (nodes.length > 1000) {
-        x = 1000
-      }
-
     }
 
-    case Join(joiningId: Int, kNode: ActorRef, allNodes: Array[ActorRef], requestNumber: Int, hActor: ActorRef) => {
+    case Join(joiningId: Int, kNode: ActorRef, allNodes: Array[ActorRef], requestNumber: Int, jumpCalc: ActorRef) => {
       identifier = joiningId
       knownNode = kNode
       nodes = allNodes
       numRequests = requestNumber
-      jumpCalculator = hActor
+      jumpCalculator = jumpCalc
       knownNode ! GetKnownInstance
       for (i <- 0 to keySpace - 1) {
         var start = (identifier + math.pow(2, i).toInt) % math.pow(2, keySpace).toInt
@@ -141,7 +134,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
     }
 
     case StartQuerying => {
-      requestTicker = context.system.scheduler.schedule(FiniteDuration(5000, TimeUnit.MILLISECONDS), FiniteDuration(100, TimeUnit.MILLISECONDS), self, Start)
+      requestRepetition = context.system.scheduler.schedule(FiniteDuration(5000, TimeUnit.MILLISECONDS), FiniteDuration(100, TimeUnit.MILLISECONDS), self, Start)
 
     }
 
@@ -164,30 +157,27 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       allKeys = nKeys
     }
 
-    case UpdateFingerTable(aNodes: List[Int], newValue: Int) => {
-      UpdateFingerTableAlg.run(aNodes,newValue,this)
+    case UpdateFingerTable(newNodes: List[Int], newValue: Int) => {
+      UpdateFingerTableAlg.run(newNodes,newValue,this)
 
     }
 
-    case LookupFingerTable(keyValue: Int, orgNode: Int, hop: Int) => {
+    case LookupFingerTable(keyValue: Int, orgNode: Int, jump: Int) => {
       var key = keyValue
       requestFrom = orgNode
-      jumpCount = hop + 1
+      jumpCount = jump + 1
+      jumpCalculator ! JumpDone
 
       if (allKeys.contains(key)) {
-        //println("I am"+nodeId+"found"+key+"requestFrom" + requestFrom)
         nodes(orgNode) ! Completed(jumpCount)
       } else if (fingerTableStart.contains(key)) {
-        //println("I am" + nodeId + "requestFrom" + requestFrom + "key" + key + "forwarding to" + fingerTableNode(fingerTableStart.indexOf(key)))
         nodes(fingerTableNode(fingerTableStart.indexOf(key))) ! LookupFingerTable(key, requestFrom, jumpCount)
       } else {
         if (inIntervalExEx(key, fingerTableStart(keySpace - 1), fingerTableStart(0))) {
-          //println("I am" + nodeId + "requestFrom" + requestFrom + "key" + key + "forwarding to" + fingerTableNode(m - 1))
           nodes(fingerTableNode(keySpace - 1)) ! LookupFingerTable(key, requestFrom, jumpCount)
         } else {
           for (i <- 0 to keySpace - 2) {
             if (inIntervalExEx(key, fingerTableStart(i), fingerTableStart(i + 1))) {
-              //println("III am" + nodeId + "requestFrom" + requestFrom + "key" + key + "forwarding to" + fingerTableNode(i))
               nodes(fingerTableNode(i)) ! LookupFingerTable(key, requestFrom, jumpCount)
             }
 
@@ -201,21 +191,12 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
 
     case Start => {
       val newKey = scala.util.Random.nextInt(math.pow(2, keyspace).toInt)
-      requestCount += 1
-      if (requestCount <= numRequests) {
-        self ! LookupFingerTable(newKey, identifier, -1)
-      } else {
-        requestTicker.cancel()
-      }
+      self ! LookupFingerTable(newKey, identifier, -1)
 
     }
 
     case Completed(hopCount: Int) => {
-      requestCompleteCount += 1
-      jumpCalculator ! Calculate(hopCount)
-      if (requestCompleteCount <= numRequests) {
-      }
-
+      jumpCalculator ! RequestCompleted
     }
 
     case DumpState =>
