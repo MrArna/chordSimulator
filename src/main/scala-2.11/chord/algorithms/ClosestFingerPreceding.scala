@@ -47,10 +47,12 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
       Await.result(identifierFut,Duration.Inf)
       val identifier = identifierFut.value.get.get.asInstanceOf[Long]
 
+
       //n.finger_table
       val fingerTableFut = nodeRef ? GetFingerTable
       Await.result(fingerTableFut,Duration.Inf)
       val fingerTable = fingerTableFut.value.get.get.asInstanceOf[List[(Long,ActorRef)]]
+
 
 
       // for i = m downto 1
@@ -61,6 +63,7 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
         Await.result(identifierFut,Duration.Inf)
         var node = identifierFut.value.get.get.asInstanceOf[Long]
 
+
         //if n.finger_table[i].node belongs to [n, id]
         if(inInterval(node,identifier,id))
         {
@@ -68,6 +71,7 @@ class ClosestFingerPreceding(keyspace: Int) extends Actor
           result = fingerTable(i)._2
         }
       }
+
       sender ! result
     }
   }
