@@ -26,7 +26,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
   var jumpCount: Int = 0
   var requestRepetition: Cancellable = null
   var numRequests: Int = 0
-  var requestCompleteCount: Int = 0
+  //used for keys lookup during request
   var fingerTableStart = Array.ofDim[Int](keySpace)
   var fingerTableNode = Array.ofDim[Int](keySpace)
   var nodes: Array[ActorRef] = null
@@ -38,6 +38,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
 
   def receive = {
 
+    //initialize node
     case Initialize(nid: Int, succ: Int, pred: Int, lookup: Array[String], requestNumber: Int, totalKeys: List[Int], jActor: ActorRef) => {
       identifier = nid
       this.succ = succ
@@ -52,10 +53,29 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       }
     }
 
+    //update the nodes
     case UpdateNetwork(allNodes: Array[ActorRef]) => {
       nodes = allNodes
     }
 
+    /**
+      *
+      * Join is defined in the paper as:
+      *
+      * n.join(n')
+      *   if(n')
+      *     init_finger_table(n')
+      *     update_others()
+      *     //update key
+      *   else
+      *     //init the first node
+      *
+      * in this implementationn only the first branch is implemented since the network is built offline,
+      * so there is always a known node. Furhtermo more the branch is splitted in 3 phases
+      *
+      */
+
+    //pahse 0 initialization
     case Join(joiningId: Int, kNode: ActorRef, allNodes: Array[ActorRef], requestNumber: Int, jumpCalc: ActorRef) => {
       identifier = joiningId
       knownNode = kNode
@@ -63,21 +83,23 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       numRequests = requestNumber
       jumpCalculator = jumpCalc
       knownNode ! GetKnownInstance
+      //create the finger table structure
       for (i <- 0 to keySpace - 1) {
         var start = (identifier + math.pow(2, i).toInt) % math.pow(2, keySpace).toInt
         fingerTable(i) = (start + ",X")
       }
-
+      //get the nodes instances and populate nodes array
       for (i <- 0 to nodes.length - 1) {
         if (nodes(i) != null) {
           nodes(i) ! GetInstance
         }
 
       }
+      //launch the real join
       context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, InitJoin)
 
     }
-
+      // phase 1: the real join begins
     case InitJoin => {
       initFingerTable(knownNodeObj)
       updateOthersFingerTable()
@@ -85,9 +107,12 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       context.system.scheduler.scheduleOnce(FiniteDuration(3000, TimeUnit.MILLISECONDS), self, UpdateKeys)
 
     }
+
+      //pahse 2: the update keys begins
     case UpdateKeys => {
 
       var presentNodes: List[Int] = List()
+      //look for nodes
       for (i <- 0 to nodes.length - 1) {
         if (nodes(i) != null) {
           presentNodes ::= nodesObj(i).identifier
@@ -96,6 +121,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       }
       presentNodes = presentNodes.sorted
       var newKeys: List[Int] = List()
+      //for each node assign the right keys to it
       for (index <- 0 to presentNodes.length - 1) {
         if (index == 0) {
           var x = presentNodes(presentNodes.length - 1) + 1
@@ -116,12 +142,12 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       }
       println("Node "+identifier+" Joined")
 
-
+      //notify that one join is completed
       jumpCalculator ! JoinObserver(presentNodes, 1)
 
 
     }
-
+    // if all jon completed querying can start
     case JoinCompleted(currentNodes: List[Int]) =>
     {
       println()
@@ -131,7 +157,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       }
 
     }
-
+    //define query repetition
     case StartQuerying => {
       requestRepetition = context.system.scheduler.schedule(FiniteDuration(5000, TimeUnit.MILLISECONDS), FiniteDuration(60*1000/numRequests, TimeUnit.MILLISECONDS), self, Start)
 
@@ -161,6 +187,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
 
     }
 
+      //Lookup in order to find the requested key
     case LookupFingerTable(keyValue: Int, orgNode: Int, jump: Int) => {
       var key = keyValue
       requestFrom = orgNode
@@ -187,17 +214,18 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       }
 
     }
-
+    //create a query for the current node
     case Start => {
       val newKey = scala.util.Random.nextInt(math.pow(2, keyspace).toInt)
       self ! LookupFingerTable(newKey, identifier, -1)
 
     }
 
-    case Completed(hopCount: Int) => {
+    case Completed => {
       jumpCalculator ! RequestCompleted
     }
 
+      //dump the node state
     case DumpState =>
     {
 
@@ -278,7 +306,7 @@ object Node
   case object DumpState extends Request
 
   trait Response
-  case class Completed(totalHops: Int) extends Response
+  case object Completed extends Response
   case class JoinCompleted(currentNodes:List[Int]) extends Response
 
 

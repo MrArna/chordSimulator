@@ -22,7 +22,7 @@ class ClusterManager(keySpace:Int) extends Actor
   var numRequests: Int = 0
   var joiningNode: List[Int] = List()
   var knownNode: ActorRef = null
-  var peerNodes = Array.ofDim[ActorRef](math.pow(2, keySpace).toInt)
+  var totalNodes = Array.ofDim[ActorRef](math.pow(2, keySpace).toInt)
   var jumpCalculator:ActorRef = null
 
   def receive =
@@ -39,7 +39,7 @@ class ClusterManager(keySpace:Int) extends Actor
       for (index <- 0 to nodeIDList.length - 1) {
         var fingerTable = Array.ofDim[String](keySpace)
         var keys: List[Int] = List()
-        peerNodes(nodeIDList(index)) = context.system.actorOf(Node.props(keyspace))
+        totalNodes(nodeIDList(index)) = context.system.actorOf(Node.props(keyspace))
         //set Successor and predecessor for initial Network
         if (index == 0) {
           predecessor = nodeIDList(nodeIDList.length - 1)
@@ -93,22 +93,21 @@ class ClusterManager(keySpace:Int) extends Actor
             keys ::= i
           }
         }
-        //println(index)
-        peerNodes(nodeIDList(index)) ! Node.Initialize(nodeIDList(index), successor, predecessor, fingerTable, numRequests, keys, jumpCalculator)
+        totalNodes(nodeIDList(index)) ! Node.Initialize(nodeIDList(index), successor, predecessor, fingerTable, numRequests, keys, jumpCalculator)
       }
       for (i <- 0 to nodeIDList.length - 1) {
-        peerNodes(nodeIDList(i)) ! Node.UpdateNetwork(peerNodes)
+        totalNodes(nodeIDList(i)) ! Node.UpdateNetwork(totalNodes)
 
       }
 
-      println("Initial network Built..")
-      println("Join Started..")
+      println("<- Initial network Built")
+      println("-> Join Started")
       self ! NextNode(0)
     }
 
     case NextNode(nIndex:Int) =>{
-      peerNodes(joiningNode(nIndex)) = context.system.actorOf(Node.props(keyspace))
-      peerNodes(joiningNode(nIndex)) ! Join(joiningNode(nIndex), peerNodes(nodeIDList(0)), peerNodes, numRequests, jumpCalculator)
+      totalNodes(joiningNode(nIndex)) = context.system.actorOf(Node.props(keyspace))
+      totalNodes(joiningNode(nIndex)) ! Join(joiningNode(nIndex), totalNodes(nodeIDList(0)), totalNodes, numRequests, jumpCalculator)
 
     }
 
@@ -118,9 +117,9 @@ class ClusterManager(keySpace:Int) extends Actor
       implicit val timeout = Timeout(5 seconds)
 
       Await.result(jumpCalculator ? Calculate,Duration.Inf)
-      for (i <- 0 until peerNodes.length) {
-        if (peerNodes(i) != null) {
-          peerNodes(i) ! DumpState
+      for (i <- 0 until totalNodes.length) {
+        if (totalNodes(i) != null) {
+          totalNodes(i) ! DumpState
         }
       }
     }

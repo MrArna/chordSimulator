@@ -2,15 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92ee15c4-15a1-4099-b05f-096d26a57fa6" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.md" afterPath="$PROJECT_DIR$/readme.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/ClosestPrecedingFinger.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/ClosestPrecedingFinger.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FindPredecessor.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FindPredecessor.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FindSuccessor.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/FindSuccessor.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTableAlg.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTableAlg.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthersFingerTable.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthersFingerTable.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/simulator/Simulator.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/simulator/Simulator.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala" />
     </list>
     <ignored path="cs441-HW4.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -83,21 +76,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="UpdateFingerTableAlg.scala" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTableAlg.scala">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
-              <caret line="23" column="3" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ClusterManager.scala" pinned="false" current-in-tab="false">
+      <file leaf-file-name="ClusterManager.scala" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="99" column="46" selection-start-line="99" selection-start-column="40" selection-end-line="99" selection-end-column="46" />
+            <state relative-caret-position="345">
+              <caret line="23" column="32" selection-start-line="23" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
               <folding>
                 <element signature="e#20#62#0" expanded="true" />
               </folding>
@@ -105,20 +88,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Node.scala" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala">
+      <file leaf-file-name="InitFingerTable.scala" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="273" column="23" selection-start-line="273" selection-start-column="13" selection-end-line="273" selection-end-column="23" />
-              <folding>
-                <element signature="e#15#51#0" expanded="true" />
-                <element signature="e#6221#6489#0" expanded="false" />
-                <element signature="e#6493#6577#0" expanded="false" />
-                <element signature="e#6581#6656#0" expanded="false" />
-                <element signature="e#6660#6779#0" expanded="false" />
-                <element signature="e#6783#6906#0" expanded="false" />
-                <element signature="e#6910#7047#0" expanded="false" />
-              </folding>
+            <state relative-caret-position="-150">
+              <caret line="11" column="3" selection-start-line="11" selection-start-column="3" selection-end-line="11" selection-end-column="3" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -178,9 +153,7 @@
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/ClusterManager.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/simulator/ChordTest.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/JumpCalculator.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala" />
         <option value="$PROJECT_DIR$/src/test/scala-2.11/chord/NodeTest.scala" />
-        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/simulator/Simulator.scala" />
         <option value="$PROJECT_DIR$/readme.md" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/ClosestPrecedingFinger.scala" />
@@ -189,6 +162,8 @@
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthersFingerTable.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTableAlg.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" />
+        <option value="$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala" />
       </list>
     </option>
   </component>
@@ -312,36 +287,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="ClusterManager.scala" />
-              <option name="myItemType" value="org.jetbrains.plugins.scala.components.ScalaDefsProjectViewProvider$ScalaFileTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="ChordSim" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="cs441-HW4" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="main" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="scala-2.11" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="chord" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Node.scala" />
               <option name="myItemType" value="org.jetbrains.plugins.scala.components.ScalaDefsProjectViewProvider$ScalaFileTreeNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1076,7 +1021,7 @@
       <updated>1479073520150</updated>
       <workItem from="1479073522182" duration="84651000" />
       <workItem from="1479653140420" duration="34369000" />
-      <workItem from="1479764610052" duration="9473000" />
+      <workItem from="1479764610052" duration="10264000" />
     </task>
     <servers />
   </component>
@@ -1113,7 +1058,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="128493000" />
+    <option name="totallyTimeSpent" value="129284000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -1177,12 +1122,14 @@
           <caret line="85" column="95" selection-start-line="85" selection-start-column="95" selection-end-line="85" selection-end-column="95" />
           <folding>
             <element signature="e#15#51#0" expanded="true" />
-            <element signature="e#6221#6489#0" expanded="false" />
-            <element signature="e#6493#6577#0" expanded="false" />
-            <element signature="e#6581#6656#0" expanded="false" />
-            <element signature="e#6660#6779#0" expanded="false" />
-            <element signature="e#6783#6906#0" expanded="false" />
-            <element signature="e#6910#7047#0" expanded="false" />
+            <element signature="e#1340#1707#0" expanded="false" />
+            <element signature="e#1785#1815#0" expanded="false" />
+            <element signature="e#7257#7525#0" expanded="false" />
+            <element signature="e#7529#7613#0" expanded="false" />
+            <element signature="e#7617#7692#0" expanded="false" />
+            <element signature="e#7696#7815#0" expanded="false" />
+            <element signature="e#7819#7942#0" expanded="false" />
+            <element signature="e#7946#8083#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1367,40 +1314,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="4" selection-start-line="11" selection-start-column="4" selection-end-line="11" selection-end-column="4" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="273" column="23" selection-start-line="273" selection-start-column="13" selection-end-line="273" selection-end-column="23" />
-          <folding>
-            <element signature="e#15#51#0" expanded="true" />
-            <element signature="e#6221#6489#0" expanded="false" />
-            <element signature="e#6493#6577#0" expanded="false" />
-            <element signature="e#6581#6656#0" expanded="false" />
-            <element signature="e#6660#6779#0" expanded="false" />
-            <element signature="e#6783#6906#0" expanded="false" />
-            <element signature="e#6910#7047#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="164">
-          <caret line="99" column="46" selection-start-line="99" selection-start-column="40" selection-end-line="99" selection-end-column="46" />
-          <folding>
-            <element signature="e#20#62#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthersFingerTable.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="325">
@@ -1411,9 +1324,45 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTableAlg.scala">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
+        <state relative-caret-position="220">
           <caret line="23" column="3" selection-start-line="23" selection-start-column="3" selection-end-line="23" selection-end-column="3" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-150">
+          <caret line="11" column="3" selection-start-line="11" selection-start-column="3" selection-end-line="11" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="313">
+          <caret line="227" column="27" selection-start-line="227" selection-start-column="27" selection-end-line="227" selection-end-column="27" />
+          <folding>
+            <element signature="e#15#51#0" expanded="true" />
+            <element signature="e#1340#1707#0" expanded="false" />
+            <element signature="e#1785#1815#0" expanded="false" />
+            <element signature="e#7257#7525#0" expanded="false" />
+            <element signature="e#7529#7613#0" expanded="false" />
+            <element signature="e#7617#7692#0" expanded="false" />
+            <element signature="e#7696#7815#0" expanded="false" />
+            <element signature="e#7819#7942#0" expanded="false" />
+            <element signature="e#7946#8083#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="345">
+          <caret line="23" column="32" selection-start-line="23" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#62#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
