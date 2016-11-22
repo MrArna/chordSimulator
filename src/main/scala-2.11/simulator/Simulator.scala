@@ -3,29 +3,18 @@ package simulator
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
-import akka.actor.Actor.Receive
-import akka.actor.{Actor, ActorRef, ActorSystem}
+import akka.actor.{Actor, ActorRef, ActorSystem, _}
 import akka.io.IO
 import akka.pattern.ask
 import akka.util.Timeout
 import simulator.ClusterManager.{DumpSystem, InitMaster}
 import spray.can.Http
 import spray.can.server.UHttp
-import spray.http.HttpRequest
+import spray.http.HttpMethods._
+import spray.http.{HttpRequest, _}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
-import scala.io.StdIn
-import akka.pattern.ask
-import akka.util.Timeout
-import akka.actor._
-import spray.can.Http
-import spray.can.server.Stats
-import spray.util._
-import spray.http._
-import HttpMethods._
-import MediaTypes._
-import spray.can.Http.RegisterChunkHandler
 
 
 
