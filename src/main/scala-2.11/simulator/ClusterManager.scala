@@ -1,6 +1,8 @@
 package simulator
 
 
+import java.util.Calendar
+
 import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
@@ -8,6 +10,7 @@ import chord.JumpCalculator.{Calculate, InitObserver}
 import chord.Node.{DumpState, Join}
 import chord.{JumpCalculator, Node}
 import simulator.ClusterManager.{DumpSystem, InitMaster, NextNode}
+
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -115,6 +118,11 @@ class ClusterManager(keySpace:Int) extends Actor
 
 
       implicit val timeout = Timeout(5 seconds)
+
+      import java.io._
+      val pw = new PrintWriter(new File("Log.txt" ))
+      pw.append("[" + Calendar.getInstance().getTime() + "]")
+      pw.close
 
       Await.result(jumpCalculator ? Calculate,Duration.Inf)
       for (i <- 0 until totalNodes.length) {

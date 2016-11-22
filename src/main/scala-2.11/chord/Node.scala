@@ -1,5 +1,6 @@
 package chord
 
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorLogging, ActorRef, Cancellable, Props}
@@ -228,6 +229,8 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       //dump the node state
     case DumpState =>
     {
+      import java.io._
+      val pw = new PrintWriter(new File("Log.txt" ))
 
       var ftStr = ""
       for(i <- 0 until fingerTable.length-1)
@@ -236,10 +239,11 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       }
       ftStr = ftStr +  "(" +fingerTable(fingerTable.length-1) + ")"
 
-      println(
-        "{\"node\":\"" + identifier + "\",\n" +
-        " \"fingerTable\": [" + ftStr + "],\n " +
-          "\"keys\": \"" + allKeys + "\"}")
+      pw.append(
+        "{\t\"node\":\"" + identifier + "\",\n" +
+        " \t\"fingerTable\": [" + ftStr + "],\n " +
+          "\t\"keys\": \"" + allKeys + "\"\n}")
+      pw.close
     }
 
   }

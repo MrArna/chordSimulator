@@ -23,11 +23,11 @@ class JumpCalculator(numNodes: Int, numRequests: Int) extends Actor
     case Calculate => {
       var avgJumos: Double = 0
       if(requestCompleted != 0) avgJumos = totalJumps / requestCompleted
-      println()
-      println("Total Jumps:" + totalJumps + " Total Requests Completed: " + requestCompleted)
-      println()
-      println("Average Number Jumps: " + avgJumos)
-      println()
+
+      import java.io._
+      val pw = new PrintWriter(new File("Log.txt" ))
+      pw.append("Total Jumps:" + totalJumps + " Total Requests Completed: " + requestCompleted + "Average Number Jumps: " + avgJumos)
+      pw.close()
       sender ! "ok"
 
     }
