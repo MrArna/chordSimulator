@@ -25,9 +25,24 @@ class JumpCalculator(numNodes: Int, numRequests: Int) extends Actor
       if(requestCompleted != 0) avgJumos = totalJumps / requestCompleted
 
       import java.io._
-      val pw = new PrintWriter(new File("Log.txt" ))
-      pw.append("Total Jumps:" + totalJumps + " Total Requests Completed: " + requestCompleted + "Average Number Jumps: " + avgJumos)
-      pw.close()
+
+      val log = new File("log.txt")
+
+      val pw: PrintWriter = null
+
+      if(log.exists())
+      {
+        val pw = new PrintWriter(new FileOutputStream(log, true))
+        pw.append("Total Jumps:" + totalJumps + " Total Requests Completed: " + requestCompleted + "Average Number Jumps: " + avgJumos + "\n")
+        pw.close()
+      }
+      else
+      {
+        val pw = new PrintWriter(log)
+        pw.append("Total Jumps:" + totalJumps + " Total Requests Completed: " + requestCompleted + "Average Number Jumps: " + avgJumos + "\n")
+        pw.close()
+      }
+
       sender ! "ok"
 
     }

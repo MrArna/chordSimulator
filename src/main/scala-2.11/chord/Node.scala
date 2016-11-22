@@ -196,7 +196,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       jumpCalculator ! JumpDone
 
       if (allKeys.contains(key)) {
-        nodes(orgNode) ! Completed(jumpCount)
+        nodes(orgNode) ! Completed
       } else if (fingerTableStart.contains(key)) {
         nodes(fingerTableNode(fingerTableStart.indexOf(key))) ! LookupFingerTable(key, requestFrom, jumpCount)
       } else {
@@ -230,7 +230,9 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
     case DumpState =>
     {
       import java.io._
-      val pw = new PrintWriter(new File("Log.txt" ))
+      val log = new File("log.txt")
+
+      val pw: PrintWriter = null
 
       var ftStr = ""
       for(i <- 0 until fingerTable.length-1)
@@ -239,11 +241,27 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
       }
       ftStr = ftStr +  "(" +fingerTable(fingerTable.length-1) + ")"
 
-      pw.append(
-        "{\t\"node\":\"" + identifier + "\",\n" +
-        " \t\"fingerTable\": [" + ftStr + "],\n " +
-          "\t\"keys\": \"" + allKeys + "\"\n}")
-      pw.close
+
+      if(log.exists())
+      {
+        val pw = new PrintWriter(new FileOutputStream(log, true))
+        pw.append(
+          "{\t\"node\":\"" + identifier + "\",\n" +
+            " \t\"fingerTable\": [" + ftStr + "],\n " +
+            "\t\"keys\": \"" + allKeys + "\"\n}\n")
+        pw.close
+      }
+      else
+      {
+        val pw = new PrintWriter(log)
+        pw.append(
+          "{\t\"node\":\"" + identifier + "\",\n" +
+            " \t\"fingerTable\": [" + ftStr + "],\n " +
+            "\t\"keys\": \"" + allKeys + "\"\n}\n")
+        pw.close
+      }
+
+
     }
 
   }

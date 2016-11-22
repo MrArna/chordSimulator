@@ -3,15 +3,36 @@ package simulator
 import java.math.BigInteger
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.Actor.Receive
+import akka.actor.{Actor, ActorRef, ActorSystem}
+import akka.io.IO
+import akka.pattern.ask
+import akka.util.Timeout
 import simulator.ClusterManager.{DumpSystem, InitMaster}
+import spray.can.Http
+import spray.can.server.UHttp
+import spray.http.HttpRequest
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.FiniteDuration
+import scala.concurrent.duration._
+import scala.io.StdIn
+import akka.pattern.ask
+import akka.util.Timeout
+import akka.actor._
+import spray.can.Http
+import spray.can.server.Stats
+import spray.util._
+import spray.http._
+import HttpMethods._
+import MediaTypes._
+import spray.can.Http.RegisterChunkHandler
+
 
 
 
 object Simulator extends App {
+
+  implicit val timeout: Timeout = 3.seconds
 
 
   val usage = """
@@ -59,7 +80,7 @@ object Simulator extends App {
   println("Logging frequency [SEC]: " + options.get('initNodes).get.asInstanceOf[Int])
 
 
-  val system = ActorSystem("ChordSystem")
+  implicit val system = ActorSystem("ChordSystem")
 
   var nodeIDList: List[Int] = List()
 
@@ -94,19 +115,38 @@ object Simulator extends App {
     joiningNode ::= getNodeID()
   }
 
+  class Server(master: ActorRef) extends Actor
+  {
+    override def receive: Receive =
+    {
+      case _: Http.Connected => sender ! Http.Register(self)
 
-  println()
-  println("-> Network Build Started")
-  println("-> Joining Nodes: " + joiningNode.toList)
-  val master: ActorRef = system.actorOf(ClusterManager.props(keyspace))
-  master ! InitMaster(nodeIDList, numRequests, joiningNode)
+      case HttpRequest(GET, Uri.Path("/start"), _, _, _) =>
+      {
+        master ! InitMaster(nodeIDList, numRequests, joiningNode)
+        println()
+        println("-> Network Build Started")
+        println("-> Joining Nodes: " + joiningNode.toList)
+        system.scheduler.schedule(FiniteDuration(20, TimeUnit.SECONDS), FiniteDuration(options.get('initNodes).get.asInstanceOf[Int], TimeUnit.SECONDS), master, DumpSystem)
+        system.scheduler.scheduleOnce(
+          FiniteDuration(options.get('duration).get.asInstanceOf[Int],TimeUnit.SECONDS),
+          new java.util.TimerTask {
+            def run() {
+              System.exit(0)}
+          }
+        )
+        sender ! HttpResponse(entity = "Simulation started")
+      }
 
-  system.scheduler.schedule(FiniteDuration(20, TimeUnit.SECONDS), FiniteDuration(options.get('initNodes).get.asInstanceOf[Int], TimeUnit.SECONDS), master, DumpSystem)
-  system.scheduler.scheduleOnce(
-    FiniteDuration(options.get('duration).get.asInstanceOf[Int],TimeUnit.SECONDS),
-    new java.util.TimerTask {
-      def run() {
-        System.exit(0)}
+
     }
-  )
+  }
+
+  val master: ActorRef = system.actorOf(ClusterManager.props(keyspace))
+  val server = system.actorOf(Props(new Server(master)))
+
+  private val httpPortNumber = 4567
+  IO(UHttp) ? Http.Bind(server, "localhost", httpPortNumber)
 }
+
+

@@ -120,9 +120,23 @@ class ClusterManager(keySpace:Int) extends Actor
       implicit val timeout = Timeout(5 seconds)
 
       import java.io._
-      val pw = new PrintWriter(new File("Log.txt" ))
-      pw.append("[" + Calendar.getInstance().getTime() + "]")
-      pw.close
+      val log = new File("log.txt")
+
+      val pw: PrintWriter = null
+
+      if(log.exists())
+      {
+        val pw = new PrintWriter(new FileOutputStream(log, true))
+        pw.append("[" + Calendar.getInstance().getTime() + "]\n")
+        pw.close
+      }
+      else
+      {
+        val pw = new PrintWriter(log)
+        pw.append("[" + Calendar.getInstance().getTime() + "]\n")
+        pw.close
+      }
+
 
       Await.result(jumpCalculator ? Calculate,Duration.Inf)
       for (i <- 0 until totalNodes.length) {
