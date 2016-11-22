@@ -112,10 +112,9 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
             newKeys ::= i
           }
         }
-        //println(newKeys.toList)
         nodes(presentNodes(index)) ! SetKeys(newKeys)
       }
-      println("Node "+identifier+" Joined..")
+      println("Node "+identifier+" Joined")
 
 
       jumpCalculator ! JoinObserver(presentNodes, 1)
@@ -126,7 +125,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
     case JoinCompleted(currentNodes: List[Int]) =>
     {
       println()
-      println("Request Processing Started...")
+      println("-> Request Processing Started")
       for (i <- 0 to currentNodes.length - 1) {
         nodes(currentNodes(i)) ! StartQuerying
       }
@@ -134,7 +133,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
     }
 
     case StartQuerying => {
-      requestRepetition = context.system.scheduler.schedule(FiniteDuration(5000, TimeUnit.MILLISECONDS), FiniteDuration(100, TimeUnit.MILLISECONDS), self, Start)
+      requestRepetition = context.system.scheduler.schedule(FiniteDuration(5000, TimeUnit.MILLISECONDS), FiniteDuration(60*1000/numRequests, TimeUnit.MILLISECONDS), self, Start)
 
     }
 

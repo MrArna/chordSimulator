@@ -1,9 +1,14 @@
 package simulator
 
 import java.math.BigInteger
+import java.util.concurrent.TimeUnit
 
 import akka.actor.{ActorRef, ActorSystem}
 import simulator.ClusterManager.{DumpSystem, InitMaster}
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.FiniteDuration
+
 
 
 object Simulator extends App {
@@ -14,7 +19,7 @@ object Simulator extends App {
               -jn <joining-nodes>
               -d <duration-in-seconds>
               -ts <time-stamp-in-seconds>
-              -qn <nr-of-queries-per-actor>
+              -qn <nr-of-queries-per-actor-per-minute>
               """
 
   type OptionMap = Map[Symbol, Any]
@@ -45,7 +50,13 @@ object Simulator extends App {
 
   val numNodes: Int = options.get('initNodes).get.asInstanceOf[Int]
   val numJoiningNodes = options.get('joinNodes).get.asInstanceOf[Int]
-  val numRequests: Int = 10 //options.get('queriesNumber).get.asInstanceOf[Int]
+  val numRequests: Int = options.get('queriesNumber).get.asInstanceOf[Int]
+
+  println("*** PARAMS ***")
+  println("Initial nodes: " + numNodes)
+  println("Joining nodes: " + numJoiningNodes)
+  println("Duration [SEC]: " + options.get('duration).get.asInstanceOf[Int])
+  println("Logging frequency [SEC]: " + options.get('initNodes).get.asInstanceOf[Int])
 
 
   val system = ActorSystem("ChordSystem")
@@ -85,16 +96,17 @@ object Simulator extends App {
 
 
   println()
-  println("Network Build Started...")
-  println("Joining Nodes: " + joiningNode.toList)
-  //val tempList: List[Int] = 6:: 5:: 15:: 12:: 2:: Nil
-  //val tempJoinList: List[Int] = 1::3::11::8:: 10:: Nil
+  println("-> Network Build Started")
+  println("-> Joining Nodes: " + joiningNode.toList)
   val master: ActorRef = system.actorOf(ClusterManager.props(keyspace))
   master ! InitMaster(nodeIDList, numRequests, joiningNode)
 
-  while(true)
-    {
-      Console.readLine()
-      master ! DumpSystem
+  system.scheduler.schedule(FiniteDuration(20, TimeUnit.SECONDS), FiniteDuration(options.get('initNodes).get.asInstanceOf[Int], TimeUnit.SECONDS), master, DumpSystem)
+  system.scheduler.scheduleOnce(
+    FiniteDuration(options.get('duration).get.asInstanceOf[Int],TimeUnit.SECONDS),
+    new java.util.TimerTask {
+      def run() {
+        System.exit(0)}
     }
+  )
 }

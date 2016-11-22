@@ -36,7 +36,7 @@ Further information about classes can be found as comment into the code.
 The application creates a Chord based network, join to it nodes and send requests to them. Logging periodically information on the network
 
 #####Limitation
-The major limitations are: all the keys are assigned to the respective nodes, the application is launched by command line.
+The major limitations are: all the keys are assigned to the respective nodes, the application is launched by command line and logging information are printed in the terminal.
 
 
 #Usage
