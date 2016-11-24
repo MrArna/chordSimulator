@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="92ee15c4-15a1-4099-b05f-096d26a57fa6" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/JumpCalculator.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/JumpCalculator.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala" afterPath="$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/readme.md" afterPath="$PROJECT_DIR$/readme.md" />
     </list>
     <ignored path="cs441-HW4.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -92,7 +90,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Node.scala" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Node.scala" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="227">
@@ -116,6 +114,22 @@
                 <element signature="e#7725#7772#0" expanded="false" />
                 <element signature="e#7828#8706#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="readme.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/readme.md">
+          <provider editor-type-id="MarkdownFxPreviewEditor">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="FIRST">
+              <first_editor relative-caret-position="30">
+                <caret line="37" column="184" selection-start-line="37" selection-start-column="184" selection-end-line="37" selection-end-column="184" />
+                <folding />
+              </first_editor>
+              <second_editor />
             </state>
           </provider>
         </entry>
@@ -196,7 +210,6 @@
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/InitFingerTable.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateOthersFingerTable.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/algorithms/UpdateFingerTableAlg.scala" />
-        <option value="$PROJECT_DIR$/readme.md" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/simulator/Simulator.scala" />
         <option value="$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/ClosestPrecedingFinger$Test.scala" />
         <option value="$PROJECT_DIR$/src/test/scala-2.11/chord/algorithms/FindPredecessor$Test.scala" />
@@ -204,6 +217,7 @@
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/JumpCalculator.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/simulator/ClusterManager.scala" />
         <option value="$PROJECT_DIR$/src/main/scala-2.11/chord/Node.scala" />
+        <option value="$PROJECT_DIR$/readme.md" />
       </list>
     </option>
   </component>
@@ -1057,7 +1071,7 @@
       <workItem from="1479073522182" duration="84651000" />
       <workItem from="1479653140420" duration="34369000" />
       <workItem from="1479764610052" duration="10671000" />
-      <workItem from="1479777542153" duration="10472000" />
+      <workItem from="1479777542153" duration="10913000" />
     </task>
     <servers />
   </component>
@@ -1094,7 +1108,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="140163000" />
+    <option name="totallyTimeSpent" value="140604000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
@@ -1292,20 +1306,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/readme.md">
-      <provider editor-type-id="MarkdownFxPreviewEditor">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="FIRST">
-          <first_editor relative-caret-position="570">
-            <caret line="38" column="77" selection-start-line="38" selection-start-column="77" selection-end-line="38" selection-end-column="77" />
-            <folding />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/test/scala-2.11/chord/NodeTest.scala">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="141">
@@ -1441,6 +1441,20 @@
             <element signature="e#7725#7772#0" expanded="false" />
             <element signature="e#7828#8706#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/readme.md">
+      <provider editor-type-id="MarkdownFxPreviewEditor">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="FIRST">
+          <first_editor relative-caret-position="30">
+            <caret line="37" column="184" selection-start-line="37" selection-start-column="184" selection-end-line="37" selection-end-column="184" />
+            <folding />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>

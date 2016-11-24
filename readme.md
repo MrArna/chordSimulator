@@ -28,16 +28,22 @@ It has been designed in order to be as extendable as possible. In detail, it's c
   
 Further information about classes can be found as comment into the code.
 
-#Functionalities and limitations
+#Functionalities && Simulation
 ----------------
 
-#####Functionalities
+#####Functionalities 
 
 The application creates a Chord based network, join to it nodes and send requests to them. Logging periodically information on the network into a "log.txt" file.
+Since the meaning of the data is not relevant I decided to represent data as randomly generated string.
+The log file contains the status of the network and of each node, furthermore it provides the number of request completed and the average number of jump in order to complete a request.
 
-#####Limitation
-The major limitations are: all the keys are assigned to the respective nodes.
-
+#####Simulation
+The simulation is so composed: 
+    
++ The initial network is created and initiated
++ The new nodes join into the network
++ The data are uploaded into the cluster
++ Request for those data are sent
 
 #Usage
 ----------------
