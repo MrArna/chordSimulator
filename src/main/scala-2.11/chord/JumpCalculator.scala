@@ -3,7 +3,7 @@ package chord
 import akka.actor.{Actor, ActorRef, Props}
 import simulator.ClusterManager.NextNode
 import chord.JumpCalculator._
-import chord.Node.JoinCompleted
+import chord.Node.{UpdatingPhaseCompleted, UpdateDone}
 
 /**
   * Created by Marco on 21/11/16.
@@ -54,6 +54,7 @@ class JumpCalculator(numNodes: Int, numRequests: Int) extends Actor
 
     case RequestCompleted => requestCompleted += 1
 
+    case UpdateDone => clusterManager forward UpdateDone
 
     case InitObserver(mNode:ActorRef, jCount:Int)=>{
       clusterManager = mNode
@@ -66,7 +67,7 @@ class JumpCalculator(numNodes: Int, numRequests: Int) extends Actor
       currentJoinedCount +=1
 
       if(currentJoinedCount == joinCount ){
-        sender ! JoinCompleted(currentNodes)
+        clusterManager ! JoinPhaseCompleted(currentNodes)
 
       }else{
         clusterManager ! NextNode(currentJoinedCount)
@@ -86,7 +87,7 @@ object JumpCalculator
   case object JumpDone extends Request
 
   trait Response
-
+  case class  JoinPhaseCompleted(currentNodes:List[Int]) extends Response
 
   def props(numNodes: Int, numRequests: Int):Props = Props(new JumpCalculator(numNodes, numRequests))
 }

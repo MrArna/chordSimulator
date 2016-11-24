@@ -23,6 +23,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
   var fingerTable = Array.ofDim[String](keySpace)
   var keyspace: Int = keySpace
   var allKeys: List[Int] = List()
+  var keyValueMap: Map[Int,String] = Map.empty
   var requestFrom: Int = 0
   var jumpCount: Int = 0
   var requestRepetition: Cancellable = null
@@ -149,7 +150,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
 
     }
     // if all jon completed querying can start
-    case JoinCompleted(currentNodes: List[Int]) =>
+    case UpdatingPhaseCompleted(currentNodes: List[Int]) =>
     {
       println()
       println("-> Request Processing Started")
@@ -211,9 +212,36 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
           }
 
         }
-
       }
+    }
 
+    case Upload(key,value) =>
+    {
+      self ! LookUpForUpdate(key,identifier,value)
+    }
+
+    case LookUpForUpdate(id,from,value) =>
+    {
+      var key = id
+
+      if (allKeys.contains(key)) {
+        keyValueMap += (key -> value)
+        jumpCalculator ! UpdateDone
+      } else if (fingerTableStart.contains(key)) {
+        nodes(fingerTableNode(fingerTableStart.indexOf(key))) ! LookUpForUpdate(key, from, value)
+      } else {
+        if (inIntervalExEx(key, fingerTableStart(keySpace - 1), fingerTableStart(0))) {
+          nodes(fingerTableNode(keySpace - 1)) ! LookUpForUpdate(key, from, value)
+        } else {
+          for (i <- 0 to keySpace - 2) {
+            if (inIntervalExEx(key, fingerTableStart(i), fingerTableStart(i + 1))) {
+              nodes(fingerTableNode(i)) ! LookUpForUpdate(key, from, value)
+            }
+
+          }
+
+        }
+      }
     }
     //create a query for the current node
     case Start => {
@@ -248,7 +276,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
         pw.append(
           "{\t\"node\":\"" + identifier + "\",\n" +
             " \t\"fingerTable\": [" + ftStr + "],\n " +
-            "\t\"keys\": \"" + allKeys + "\"\n}\n")
+            "\t\"keys\": \"" + keyValueMap + "\"\n}\n")
         pw.close
       }
       else
@@ -257,7 +285,7 @@ class Node(keySpace: Int) extends Actor with ActorLogging {
         pw.append(
           "{\t\"node\":\"" + identifier + "\",\n" +
             " \t\"fingerTable\": [" + ftStr + "],\n " +
-            "\t\"keys\": \"" + allKeys + "\"\n}\n")
+            "\t\"keys\": \"" + keyValueMap + "\"\n}\n")
         pw.close
       }
 
@@ -326,11 +354,13 @@ object Node
   case object UpdateKeys extends Request
   case class SetKeys(newKeys: List[Int]) extends Request
   case object DumpState extends Request
+  case class Upload(key:Int,value:String) extends Request
+  case class LookUpForUpdate(key: Int, requestFrom: Int, value: String) extends Request
 
   trait Response
   case object Completed extends Response
-  case class JoinCompleted(currentNodes:List[Int]) extends Response
-
+  case class UpdatingPhaseCompleted(currentNodes:List[Int]) extends Response
+  case object UpdateDone extends Response
 
   def props(keyspace: Int): Props = Props(new Node(keyspace))
 }

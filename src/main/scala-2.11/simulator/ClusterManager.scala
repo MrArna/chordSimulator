@@ -1,15 +1,16 @@
 package simulator
 
 
+import java.math.BigInteger
 import java.util.Calendar
 
 import akka.actor.{Actor, ActorRef, Props}
 import akka.pattern.ask
 import akka.util.Timeout
-import chord.JumpCalculator.{Calculate, InitObserver}
-import chord.Node.{DumpState, Join}
+import chord.JumpCalculator.{Calculate, InitObserver, JoinPhaseCompleted}
+import chord.Node._
 import chord.{JumpCalculator, Node}
-import simulator.ClusterManager.{DumpSystem, InitMaster, NextNode}
+import simulator.ClusterManager.{DumpSystem, InitMaster, NextNode, StartUploading}
 
 import scala.concurrent.duration._
 import scala.concurrent.Await
@@ -27,6 +28,8 @@ class ClusterManager(keySpace:Int) extends Actor
   var knownNode: ActorRef = null
   var totalNodes = Array.ofDim[ActorRef](math.pow(2, keySpace).toInt)
   var jumpCalculator:ActorRef = null
+  var uploadsLimit: Int = 0
+  var updateCounter = 0
 
   def receive =
   {
@@ -146,6 +149,54 @@ class ClusterManager(keySpace:Int) extends Actor
       }
     }
 
+
+
+    case JoinPhaseCompleted(currentNodes) =>
+      {
+        println("-> Join phase completed")
+        nodeIDList = currentNodes
+        val usedKeys: List[Int] = List.empty
+        uploadsLimit = scala.util.Random.nextInt(math.pow(2, keyspace).toInt)
+        println("-> Uploading phase started: uploading " + uploadsLimit + " datas")
+        for(i <- 0 until uploadsLimit)
+        {
+          var initialNode = scala.util.Random.nextInt(math.pow(2, keyspace).toInt)
+          while (totalNodes(initialNode) == null)
+          {
+            initialNode = scala.util.Random.nextInt(math.pow(2, keyspace).toInt)
+          }
+          var keyValue = getKeyID(usedKeys)
+          totalNodes(initialNode) ! Upload(keyValue._1,keyValue._2)
+        }
+      }
+
+
+    case UpdateDone => {
+      updateCounter += 1
+      println("----> Update completed: " + updateCounter + "/" + uploadsLimit)
+      if(updateCounter == uploadsLimit)
+        {
+          sender ! UpdatingPhaseCompleted(nodeIDList)
+        }
+      }
+
+  }
+
+  def getKeyID(usedKeys: List[Int]): (Int,String) = {
+    //generates a random IP
+    val nodeIP = "Marco.Arnaboldi" + scala.util.Random.nextInt(256) + "." + scala.util.Random.nextInt(256) + "." + scala.util.Random.nextInt(256) + "." + scala.util.Random.nextInt(256)
+    val md = java.security.MessageDigest.getInstance("SHA-1")
+    var encodedString = md.digest(nodeIP.getBytes("UTF-8")).map("%02x".format(_)).mkString
+    encodedString = new BigInteger(encodedString, 16).toString(2)
+
+
+    var addressHash = Integer.parseInt(encodedString.substring(encodedString.length() - keyspace), 2)
+    var result:(Int,String) = (addressHash,nodeIP)
+    //redo if the id already exists
+    if (usedKeys.contains(addressHash)) {
+      result = getKeyID(usedKeys)
+    }
+    return result
   }
 }
 
@@ -156,6 +207,7 @@ object ClusterManager
   case class InitMaster(nodeIDList: List[Int], numRequests: Int, joiningNode: List[Int]) extends Request
   case class NextNode(nodeIndex:Int) extends Request
   case object DumpSystem extends Request
+  case object StartUploading extends Request
 
   trait Response
 
